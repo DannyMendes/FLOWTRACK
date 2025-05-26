@@ -1,0 +1,198 @@
+/* estilos.css - Estilos para a página de detalhe da tarefa */
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.barra-navegacao {
+    display: flex;
+    align-items: center;
+    background-color: #00a6d0;
+    color: white;
+    padding: 15px 20px;
+    font-family: Arial, sans-serif;
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: flex-start; /* Alinha o conteúdo à esquerda */
+}
+
+.icone-menu {
+    font-size: 24px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.titulo {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: left; /* Força o alinhamento à esquerda */
+}
+
+.icone-usuario {
+    font-size: 24px;
+    margin-left: auto; /* Empurra o ícone do usuário para a direita */
+}
+
+.container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 600px;
+    overflow: hidden;
+    margin-top: 20px;
+    padding: 30px; /* Aumentei o espaço interno do container */
+    box-sizing: border-box;
+}
+
+.detalhes-tarefa {
+    padding: 20px;
+}
+
+.detalhes-tarefa h2 {
+    color: #00a6d0;
+    margin-top: 0;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.info-tarefa {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px;
+}
+
+.item-info-tarefa {
+    display: contents;
+    padding-bottom: 5px;
+}
+
+.item-info-tarefa strong {
+    font-weight: bold;
+    color: #333;
+    text-align: left;
+    padding-right: 10px; /* Aumentei um pouco o padding para o espaçamento da linha */
+    border-right: 1px solid #eee; /* Adiciona a linha vertical à direita dos rótulos */
+    padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+.item-info-tarefa span {
+    text-align: left;
+    padding-left: 10px; /* Adiciona um pouco de espaço à esquerda dos dados */
+    padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+.item-info-tarefa:last-child strong,
+.item-info-tarefa:last-child span {
+    border-bottom: none;
+}
+
+.item-info-tarefa strong::after {
+    content: ":"; /* Adiciona os dois pontos como separador */
+    position: absolute;
+    right: 5px;
+    top: 0;
+    color: #777; /* Cor do separador */
+}
+
+.acoes-tarefa {
+    padding: 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.acoes-tarefa label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+    width: 100%;
+    text-align: left;
+}
+
+.acoes-tarefa select,
+.acoes-tarefa input[type="text"],
+.acoes-tarefa textarea {
+    width: calc(100% - 12px);
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.acoes-tarefa textarea {
+    width: calc(100% - 12px);
+}
+
+.botao-adicionar-fotos {
+    background-color: #778899;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.botao-adicionar-fotos:hover {
+    background-color: #696969;
+}
+
+.botao-concluir-alteracao {
+    background-color: #00a6d0;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: auto;
+    margin-top: 15px;
+}
+
+.botao-concluir-alteracao:hover {
+    background-color: #008bb0;
+}
+
+.container-botoes {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.container-botoes > *:first-child {
+    flex-grow: 1;
+}
+
+.container-botoes button {
+    flex-grow: 0;
+}
+
+.mensagem-erro {
+    color: red;
+    text-align: center;
+    margin-top: 20px;
+}

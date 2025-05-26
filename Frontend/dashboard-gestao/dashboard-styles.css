@@ -1,0 +1,144 @@
+/* Estilos para a página de dashboard/gestão */
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.cabecalho {
+    background-color: #00bcd4;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: flex-start;
+}
+
+.icone-menu {
+    font-size: 24px;
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+.titulo {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.navegacao {
+    background-color: #e0f7fa;
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid #b2ebf2;
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: flex-start;
+}
+
+.botao-navegacao {
+    background: none;
+    border: none;
+    color: #00bcd4;
+    padding: 10px 15px;
+    margin-right: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.botao-navegacao.ativo {
+    background-color: #b2ebf2;
+    border-radius: 5px;
+}
+
+.botao-navegacao:hover {
+    background-color: #b2ebf2;
+    border-radius: 5px;
+}
+
+.conteudo {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 95%;
+    max-width: 900px;
+    margin-top: 20px;
+    padding: 50px;
+    box-sizing: border-box;
+}
+
+.barra-acoes {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 50px;
+}
+
+.botao-filtrar, .botao-adicionar-tarefa .botaoacao{
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.3s ease;
+    font-size: 16px;
+}
+
+.botao-filtrar:hover, .botao-adicionar-tarefa:hover {
+    background-color: #e0e0e0;
+}
+
+.botao-adicionar-tarefa {
+    color: #28a745;
+    border-color: #28a745;
+}
+
+.botao-adicionar-tarefa:hover {
+    background-color: #e3fcec;
+}
+
+.barra-acoes i {
+    font-size: 18px;
+}
+
+.titulo-pagina {
+    color: #777;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.container-tabela-tarefas {
+    overflow-x: auto;
+}
+
+.tabela-tarefas {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabela-tarefas th, .tabela-tarefas td {
+    padding: 10px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.tabela-tarefas th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.tabela-tarefas tbody tr:hover {
+    background-color: #f9f9f9;
+}

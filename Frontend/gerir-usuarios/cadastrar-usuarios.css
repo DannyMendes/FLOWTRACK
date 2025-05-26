@@ -1,0 +1,174 @@
+/* cadastrar-usuario */
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.cabecalho {
+    background-color: #00bcd4;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: flex-start;
+}
+
+.icone-menu {
+    font-size: 24px;
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+.titulo {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.navegacao {
+    background-color: #e0f7fa;
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid #b2ebf2;
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: flex-start;
+}
+
+.botao-navegacao {
+    background: none;
+    border: none;
+    color: #00bcd4;
+    padding: 10px 15px;
+    margin-right: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.botao-navegacao.ativo {
+    background-color: #b2ebf2;
+    border-radius: 5px;
+}
+
+.botao-navegacao:hover {
+    background-color: #b2ebf2;
+    border-radius: 5px;
+}
+
+.conteudo {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 95%;
+    max-width: 600px;
+    margin-top: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.titulo-pagina {
+    color: #777;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.formulario-adicionar-tarefa {
+    display: flex;
+    flex-direction: column;
+}
+
+.grupo-formulario {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.grupo-formulario label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.grupo-formulario input[type="text"],
+.grupo-formulario input[type="password"],
+.grupo-formulario select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.botao-acao {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.3s ease;
+    font-size: 16px;
+}
+
+.botao-acao:hover {
+    background-color: #e0e0e0;
+}
+
+.botao-acao.adicionar {
+    background-color: #28a745;
+    color: white;
+    border-color: #28a745;
+}
+
+.botao-acao.adicionar:hover {
+    background-color: #218838;
+}
+
+.botao-acao.cancelar {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.botao-acao.cancelar:hover {
+    background-color: #f8d7da;
+}
+
+.acoes i {
+    font-size: 18px;
+}
+
+.mensagem-erro {
+    color: #dc3545;
+    margin-bottom: 10px;
+    border: 1px solid #f8d7da;
+    background-color: #fdecea;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.mensagem-sucesso {
+    color: #28a745;
+    margin-bottom: 10px;
+    border: 1px solid #d4edda;
+    background-color: #e9f8f0;
+    padding: 10px;
+    border-radius: 5px;
+}

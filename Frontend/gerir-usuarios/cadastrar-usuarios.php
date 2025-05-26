@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard / Gestão - Cadastrar Usuário</title>
+    <link rel="stylesheet" href="cadastrar-usuarios.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="cabecalho">
+        <i class="fas fa-bars icone-menu"></i>
+        <span class="titulo">Dashboard / Gestão</span>
+    </div>
+    <div class="navegacao">
+        <button class="botao-navegacao" onclick="window.location.href='/FLOWTRACK/Frontend/dashboard-gestao/dashboard.php'">Tarefas</button>
+        <button class="botao-navegacao" onclick="window.location.href='/FLOWTRACK/Frontend/adicionar-tarefas/adicionar-tarefa.php'">Inserir tarefa</button>
+        <button class="botao-navegacao ativo" onclick="window.location.href='/FLOWTRACK/Frontend/adicionar-usuario/adicionar-usuario.php'">Cadastrar usuário</button>
+        <button class="botao-navegacao" onclick="window.location.href='/FLOWTRACK/Frontend/gerir-usuarios/usuarios.php'">Gerir usuário</button>
+        <button class="botao-navegacao" onclick="window.location.href='/FLOWTRACK/Frontend/dashboard-relatorios/relatorio.php'">Relatório</button>
+    </div>
+    <div class="conteudo">
+        <h2 class="titulo-pagina">Cadastrar Novo Usuário</h2>
+
+        <?php
+        session_start();
+        if (isset($_SESSION['erro_cadastro'])) {
+            echo '<div class="mensagem-erro">' . htmlspecialchars($_SESSION['erro_cadastro']) . '</div>';
+            unset($_SESSION['erro_cadastro']); // Limpa a variável de sessão após exibir a mensagem
+        }
+        if (isset($_SESSION['sucesso_cadastro'])) {
+            echo '<div class="mensagem-sucesso">' . htmlspecialchars($_SESSION['sucesso_cadastro']) . '</div>';
+            unset($_SESSION['sucesso_cadastro']); // Limpa a variável de sessão após exibir a mensagem
+        }
+        ?>
+
+        <form class="formulario-adicionar-tarefa" action="/FLOWTRACK/backend/processar_cadastro_usuario.php" method="post">
+            <div class="grupo-formulario">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" name="nome" required>
+            </div>
+            <div class="grupo-formulario">
+                <label for="funcao">Função:</label>
+                <input type="text" id="funcao" name="funcao">
+            </div>
+            <div class="grupo-formulario">
+                <label for="tipo_acesso">Tipo de Acesso:</label>
+                <select id="tipo_acesso" name="tipo_acesso">
+                    <option value="">Selecione</option>
+                    <option value="ADMIN">Administrador</option>
+                    <option value="GESTOR">Gestor</option>
+                    <option value="USUARIO">Usuário</option>
+                </select>
+            </div>
+            <div class="grupo-formulario">
+                <label for="usuario">Nome de Usuário:</label>
+                <input type="text" id="usuario" name="usuario" required>
+            </div>
+            <div class="grupo-formulario">
+                <label for="senha">Senha:</label>
+                <input type="password" id="senha" name="senha" required>
+            </div>
+            <div class="grupo-formulario">
+                <label for="confirmar_senha">Confirmar Senha:</label>
+                <input type="password" id="confirmar_senha" name="confirmar_senha" required>
+            </div>
+            <div class="acoes">
+                <button type="submit" class="botao-acao adicionar">
+                    <i class="fas fa-plus-circle"></i> Cadastrar Usuário
+                </button>
+                <button type="button" class="botao-acao cancelar" onclick="window.location.href='/FLOWTRACK/Frontend/gerir-usuarios/usuarios.php'">
+                    <i class="fas fa-times-circle"></i> Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

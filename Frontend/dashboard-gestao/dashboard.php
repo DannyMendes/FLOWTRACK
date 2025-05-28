@@ -37,6 +37,7 @@
                         <th>Descrição</th>
                         <th>Prioridade</th>
                         <th>Status</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -44,7 +45,7 @@
                     require '../../backend/config/database.php';
 
                     try {
-                        $stmt = $pdo->query("SELECT tarefa.data_estimada, tarefa.tema, tarefa.descricao, tarefa.prioridade, status.nome AS status FROM tarefas AS tarefa INNER JOIN status_tarefas AS status ON tarefa.status = status.id");
+                        $stmt = $pdo->query("SELECT tarefa.id, tarefa.data_estimada, tarefa.tema, tarefa.descricao, tarefa.prioridade, status.nome AS status FROM tarefas AS tarefa INNER JOIN status_tarefas AS status ON tarefa.status = status.id");
                         $tarefas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                         foreach ($tarefas as $tarefa): ?>
@@ -57,10 +58,10 @@
                                 ($tarefa['status']); ?></td>
                                 <td>
                                     <button class="open-button" onclick="window.location.href='/FLOWTRACK/Frontend/detalhe-tarefas/tarefa.php?id=<?php echo htmlspecialchars($tarefa['id']); ?>'"><i class="fas fa-folder-open"></i> </button>
- 
+
                                     <button class="botaoacao" type="submit" name="acao" value="deletar" onclick="return confirm('isso excluirá permanetemente a tarefa Tem CERTEZA?')"><i class="fas fa-trash-alt"></i></button>
                                     </form>
-                                </td>
+                                 </td>
                             </tr>
                         <?php endforeach;
 

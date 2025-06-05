@@ -1,15 +1,5 @@
 aqui nesta pagina de relatorios deve fazer as seguintes alterações : 
 
- - de acordo com o status da tarefa deve ser puxados e inseridos nessa pagina no grafico de circulos , onde mostra a porcentagem deve exibir as tarefas FINALIZADO como realizada% e as restantes como Pendentes. 
-
-
-
- - Alterar em falta para A FAZER , em progresso para EM ANDAMENTO, concluidas fica como está . ao clicar no sinbolo > que tem na frente de cada uma delas deve aparece a quantidade ex: A FAZER > 2  
-
-
-
- - Ajuste o conteudo para ocupar a largura da tela, só deixando uma borda  media ao redor . 
-
 
 
  -ao clicar em gerar relatório, deve emitir um relatório em pdf com todos os dados de cada tarefa ex. deve conter  o nome, a descrição, local, datas e horas , usuarios, respostas,  descrição do trabalho, e fotos do trabalho. 

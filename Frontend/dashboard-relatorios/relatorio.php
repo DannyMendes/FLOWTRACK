@@ -65,20 +65,22 @@ $search_tema = isset($_GET['search_tema']) ? htmlspecialchars($_GET['search_tema
             unset($_SESSION['erro_acesso']);
         }
         ?>
+         <div class="top-bar">
+            <div class="search-container">
+                <input type="text" id="search-input" name="search_tema" placeholder="Pesquisar por Tema" value="<?php echo $search_tema; ?>">
+                <i class="fas fa-times clear-icon"></i>
+            </div>
+            
+                <button class="generate-report-button" id="generate-report-button">
+                Gerar relatório  <i class="far fa-file-alt report-icon"></i>
+            </button>
+        </div>
 
         <!-- Filtro de tarefas -->
         <!-- O formulário não terá mais um 'action' direto, será processado via JS -->
         <form id="filter-form" class="filter-container">
             <!-- Campo de pesquisa movido para DENTRO do formulário -->
-            <div class="search-container">
-                <input type="text" id="search-input" name="search_tema" placeholder="Pesquisar por Tema" value="<?php echo $search_tema; ?>">
-                <i class="fas fa-times clear-icon"></i>
-            </div>
-            <div class="top-bar">
-                <button class="generate-report-button" id="generate-report-button">
-                Gerar relatório <i class="far fa-file-alt report-icon"></i>
-            </button>
-    </div>
+            
 
             <input type="date" id="filter-date" name="filter_date"
                 value="<?php echo $filter_date; ?>">
@@ -110,7 +112,7 @@ $search_tema = isset($_GET['search_tema']) ? htmlspecialchars($_GET['search_tema
 
         <!-- A tabela principal não será mais exibida aqui diretamente -->
         <!-- O conteúdo da tabela será carregado no modal -->
-    </div>
+    
 
     <!-- Container principal -->
     <div class="main-container">
@@ -157,6 +159,7 @@ $search_tema = isset($_GET['search_tema']) ? htmlspecialchars($_GET['search_tema
                 </button>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- Scripts -->

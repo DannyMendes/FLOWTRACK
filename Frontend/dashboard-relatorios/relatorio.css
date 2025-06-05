@@ -60,21 +60,18 @@ body {
 
 .date-time {
     color: #777;
-    margin: 15px;
-    width: 95%;
+    margin: 35px;
+    width: 85%;
     text-align:right;
 }
 
-.top-bar {
+.top-bar{
     display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-    width: 95%;
-    justify-content: center; /* Center search/report */
     gap: 15px;
+    margin-bottom: 20px;
 }
-
 .search-container {
+    flex-grow: 1;
     display: flex;
     background-color: #b2ebf2;
     align-items: center;
@@ -87,6 +84,7 @@ body {
     border: none;
     padding: 8px;
     outline: none;
+    width: 100%;
 }
 
 .clear-icon {
@@ -95,18 +93,18 @@ body {
     cursor: pointer;
     margin-left: 5px;
 }
-
 .generate-report-button {
     background-color: #e0f7fa;
     color: #00bcd4;
     border: 1px solid #b2ebf2;
-    padding: 10px 15px;
+    padding: 10px 22px;
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
+    font-size: 0.9em;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 3px;
     transition: background-color 0.3s ease;
 }
 
@@ -155,6 +153,9 @@ body {
     border-radius: 8px; /* Arredonda mais as bordas */
     border: 2px solid #eee; /* Borda mais espessa */
     flex-wrap: wrap; /* Mantém a responsividade */
+    width: 95%;
+    max-width: 1200px;
+     box-sizing: border-box;
 }
 
 .filter-container label {
@@ -222,13 +223,14 @@ body {
     display: flex;
     align-items: center;
     gap: 100px;
-    padding: 20px;
+    margin-top: 80px;
+    padding: 0px;
     box-sizing: border-box;
     justify-content: center;
 }
 
 .sidebar {
-    flex-basis: 200px;
+    flex-basis: 500px;
     padding-right: 20px;
 }
 

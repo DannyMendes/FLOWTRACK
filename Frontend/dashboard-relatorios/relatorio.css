@@ -80,14 +80,13 @@ body {
     align-items: center;
     border: 2px solid #b2ebf2;
     border-radius: 5px;
-    padding: 5px 10px;
+    padding: 1px 1px;
 }
 
 .search-container input[type="text"] {
     border: none;
     padding: 8px;
     outline: none;
-    width: 200px;
 }
 
 .clear-icon {
@@ -280,3 +279,125 @@ body {
     font-size: 1.5em;
     font-weight: bold;
 }
+/* Estilos do Modal */
+.modal {
+    display: none; /* Escondido por padrão */
+    position: fixed; /* Fica no topo da página */
+    z-index: 1000; /* Fica na frente de outros elementos */
+    left: 0;
+    top: 0;
+    width: 100%; /* Largura total */
+    height: 100%; /* Altura total */
+    overflow: auto; /* Permite scroll se o conteúdo for muito grande */
+    background-color: rgba(0,0,0,0.4); /* Fundo semi-transparente */
+    display: flex; /* Para centralizar o conteúdo */
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto; /* Centraliza verticalmente e horizontalmente */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Largura do modal */
+    max-width: 900px; /* Largura máxima para telas maiores */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    position: relative; /* Para posicionar o botão de fechar */
+    animation-name: animatemodal;
+    animation-duration: 0.4s;
+    max-height: 90vh; /* Altura máxima para evitar que o modal seja maior que a tela */
+    overflow-y: auto; /* Adiciona scroll interno se o conteúdo for grande */
+}
+
+/* Animação de entrada do modal */
+@keyframes animatemodal {
+    from {top: -300px; opacity: 0}
+    to {top: 0; opacity: 1}
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute; /* Posiciona o botão de fechar */
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Estilos para a tabela dentro do modal (se for diferente da tabela principal) */
+#modal-table-container .tasks-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#modal-table-container .tasks-table th,
+#modal-table-container .tasks-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#modal-table-container .tasks-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+/* Seu CSS normal para o modal e outros elementos */
+/* ... */
+
+/* Estilos específicos para impressão */
+@media print {
+    body * {
+        visibility: hidden; /* Esconde tudo por padrão */
+    }
+    #reportModal, #reportModal * {
+        visibility: visible; /* Torna o modal e seus filhos visíveis */
+    }
+    #reportModal {
+        position: absolute; /* Ajusta posicionamento para impressão */
+        left: 0;
+        top: 0;
+        width: 100% !important;
+        height: auto !important;
+        max-width: none !important;
+        max-height: none !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+        transform: none !important; /* Remove transformações que afetam o layout */
+    }
+    .modal-content {
+        padding: 0 !important; /* Remove padding do modal */
+        margin: 0 !important; /* Remove margem */
+        border: none !important; /* Remove borda */
+        background-color: transparent !important;
+        box-shadow: none !important;
+    }
+    .modal-content .close-button,
+    .modal-footer {
+        display: none !important; /* Esconde o botão de fechar e o rodapé com o botão de impressão */
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        border: 1px solid #000; /* Bordas mais visíveis para impressão */
+        padding: 8px;
+    }
+    th {
+        background-color: #eee;
+    }
+}
+

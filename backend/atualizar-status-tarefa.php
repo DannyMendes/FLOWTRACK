@@ -1,7 +1,7 @@
 <?php
 require 'config/database.php';
 session_start();
-
+ 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Verifique se o ID da tarefa foi enviado
     if (isset($_POST['id']) && is_numeric($_POST['id'])) {

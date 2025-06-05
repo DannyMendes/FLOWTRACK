@@ -24,9 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['acesso_usuario'] = $dados_usuario['tipo_acesso']; // Armazena a tipo de acesso do usuário
 
             // Redirecionamento baseado na função
-            if ($_SESSION['acesso_usuario'] === 'administrador') {
+            if ($_SESSION['acesso_usuario'] === 'Administrador') {
                 header("Location: /FLOWTRACK/Frontend/dashboard-gestao/dashboard.php");
-            } elseif ($_SESSION['acesso_usuario'] === 'comum') {
+            } elseif ($_SESSION['acesso_usuario'] === 'Comum') {
                 header("Location: /FLOWTRACK/Frontend/lista-tarefa/detalhe.php");
             } else {
                 // Função desconhecida - volta para a página de login

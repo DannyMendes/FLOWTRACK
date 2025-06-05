@@ -1,0 +1,31 @@
+aqui nesta pagina de relatorios deve fazer as seguintes alterações : 
+
+ - de acordo com o status da tarefa deve ser puxados e inseridos nessa pagina no grafico de circulos , onde mostra a porcentagem deve exibir as tarefas FINALIZADO como realizada% e as restantes como Pendentes. 
+
+
+
+ - Alterar em falta para A FAZER , em progresso para EM ANDAMENTO, concluidas fica como está . ao clicar no sinbolo > que tem na frente de cada uma delas deve aparece a quantidade ex: A FAZER > 2  
+
+
+
+ - Ajuste o conteudo para ocupar a largura da tela, só deixando uma borda  media ao redor . 
+
+
+
+ -ao clicar em gerar relatório, deve emitir um relatório em pdf com todos os dados de cada tarefa ex. deve conter  o nome, a descrição, local, datas e horas , usuarios, respostas,  descrição do trabalho, e fotos do trabalho. 
+
+ o relatórios deve conter as tarefas em sequencia . 
+
+
+
+ - a barra de pesquisar deve funcionar para pesquisar pelo nome da tarefa . 
+
+ - a barra de pesquisar deve ocupar a mesma largura dos 3 botoes abaixo . e o botão de gerar relatorio continua ao lado mas para depois desse espaço. 
+
+
+
+ - em selecionar data , deve ser um filtro que vai filtrar as tarefas finalizadas na data selecionada. 
+
+ - onde tem o selecionar , deve filtrar pelo status da tarefa(as 4 pendente, em rota, iniciado, finalizado) , ex ao selecionar pendente, deve listar em baixo todas as tarefas pendentes. 
+
+ - filtro personalizado será o botão para puxar as tarefas filtradas e listar em baixo, de acordo com os 2 filtros simultaneamente data e status. 

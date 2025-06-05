@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
     <html lang="pt">
     <head>
         <meta charset="UTF-8">
@@ -18,8 +18,19 @@
             <button class="botao-navegacao" onclick="window.location.href='/FLOWTRACK/Frontend/gerir-usuarios/usuarios.php'">Gerir usuário</button>
             <button class="botao-navegacao" onclick="window.location.href='/FLOWTRACK/Frontend/dashboard-relatorios/relatorio.php'">Relatório</button>
         </div>
+
         <div class="conteudo">
             <h2 class="titulo-pagina">Inserir Nova Tarefa</h2>
+            <?php
+                session_start();
+                if (isset($_SESSION['erro_cadastro_tarefa'])) {
+                    echo '<p class="mensagem-erro">' . $_SESSION['erro_cadastro_tarefa'] . '</p>';
+                    unset($_SESSION['erro_cadastro_tarefa']); // Limpa a mensagem de erro da sessão
+                }
+                if (isset($_GET['mensagem']) && $_GET['mensagem'] === 'tarefa_adicionada') {
+                    echo '<div class="mensagem-sucesso">Tarefa adicionada com sucesso!</div>';
+                }
+            ?>
             <form class="formulario-adicionar-tarefa" action="/FLOWTRACK/backend/processar-adm-tarefa.php" method="post">
                 <div class="grupo-formulario">
                     <label for="data_estimada">Data Estimada:</label>

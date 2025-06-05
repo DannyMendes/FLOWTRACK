@@ -1,5 +1,3 @@
-/* estilos.css - Estilos para a página de detalhe da tarefa */
-
 body {
     font-family: sans-serif;
     margin: 0;
@@ -19,7 +17,7 @@ body {
     font-family: Arial, sans-serif;
     width: 100%;
     box-sizing: border-box;
-    justify-content: flex-start; /* Alinha o conteúdo à esquerda */
+    justify-content: flex-start;
 }
 
 .icone-menu {
@@ -31,12 +29,12 @@ body {
 .titulo {
     font-size: 20px;
     font-weight: bold;
-    text-align: left; /* Força o alinhamento à esquerda */
+    text-align: left;
 }
 
 .icone-usuario {
     font-size: 24px;
-    margin-left: auto; /* Empurra o ícone do usuário para a direita */
+    margin-left: auto;
 }
 
 .container {
@@ -47,7 +45,7 @@ body {
     max-width: 600px;
     overflow: hidden;
     margin-top: 20px;
-    padding: 30px; /* Aumentei o espaço interno do container */
+    padding: 30px;
     box-sizing: border-box;
 }
 
@@ -81,15 +79,15 @@ body {
     font-weight: bold;
     color: #333;
     text-align: left;
-    padding-right: 10px; /* Aumentei um pouco o padding para o espaçamento da linha */
-    border-right: 1px solid #eee; /* Adiciona a linha vertical à direita dos rótulos */
+    padding-right: 10px;
+    border-right: 1px solid #eee;
     padding-bottom: 5px;
     border-bottom: 1px solid #eee;
 }
 
 .item-info-tarefa span {
     text-align: left;
-    padding-left: 10px; /* Adiciona um pouco de espaço à esquerda dos dados */
+    padding-left: 10px;
     padding-bottom: 5px;
     border-bottom: 1px solid #eee;
 }
@@ -100,11 +98,11 @@ body {
 }
 
 .item-info-tarefa strong::after {
-    content: ":"; /* Adiciona os dois pontos como separador */
+    content: ":";
     position: absolute;
     right: 5px;
     top: 0;
-    color: #777; /* Cor do separador */
+    color: #777;
 }
 
 .acoes-tarefa {
@@ -112,7 +110,7 @@ body {
     border-top: 1px solid #eee;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
 }
 
 .acoes-tarefa label {
@@ -124,10 +122,38 @@ body {
     text-align: left;
 }
 
+#status-opcoes-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+.status-opcao {
+    padding: 8px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-block;
+    flex-grow: 1;
+    box-sizing: border-box;
+    text-align: center;
+    min-width: 0;
+}
+
+.status-opcao.selecionado {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
 .acoes-tarefa select,
 .acoes-tarefa input[type="text"],
-.acoes-tarefa textarea {
-    width: calc(100% - 12px);
+.acoes-tarefa textarea,
+.container-botoes {
+    width: 100%;
     padding: 8px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
@@ -136,7 +162,7 @@ body {
 }
 
 .acoes-tarefa textarea {
-    width: calc(100% - 12px);
+    width: 100%;
 }
 
 .botao-adicionar-fotos {
@@ -164,11 +190,13 @@ body {
     border-radius: 4px;
     cursor: pointer;
     font-size: 1em;
-    display: flex;
-    align-items: center;
-    gap: 5px;
+    display: block;
+    align-self: center;
     width: auto;
     margin-top: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
 }
 
 .botao-concluir-alteracao:hover {
@@ -195,4 +223,18 @@ body {
     color: red;
     text-align: center;
     margin-top: 20px;
+}
+
+.rota-info, .finalizar-info {
+    display: none;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.obrigatorio::after {
+    content: " *";
+    color: red;
 }

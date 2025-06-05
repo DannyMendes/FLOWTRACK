@@ -20,7 +20,7 @@
             if (isset($_SESSION['erro_login'])) {
                 echo '<p class="mensagem-erro">' . $_SESSION['erro_login'] . '</p>';
                 unset($_SESSION['erro_login']); // Limpa a mensagem de erro
-            }
+            } 
         ?>
         <form action="/FLOWTRACK/backend/processar_login.php" method="post">
             <label for="usuario">Usuário</label>

@@ -118,6 +118,83 @@ body {
 .report-icon {
     font-size: 18px;
 }
+//filtro
+
+.tasks-table-container {
+    overflow-x: auto;
+}
+
+.tasks-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tasks-table th,
+.tasks-table td {
+    padding: 10px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.tasks-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.tasks-table tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+//botoes
+.filter-container {
+    display: flex;
+    gap: 25px; /* Aumenta o espaçamento entre os elementos */
+    margin-bottom: 30px; /* Aumenta a margem inferior */
+    align-items: center;
+    padding: 20px; /* Aumenta o preenchimento interno */
+    background-color: #f9f9f9;
+    border-radius: 8px; /* Arredonda mais as bordas */
+    border: 2px solid #eee; /* Borda mais espessa */
+    flex-wrap: wrap; /* Mantém a responsividade */
+}
+
+.filter-container label {
+    font-weight: bold;
+    flex-shrink: 0;
+    color: #555;
+    font-size: 1.1em; /* Aumenta o tamanho da fonte da label */
+}
+
+.filter-container select,
+.filter-container input[type="date"] {
+    padding: 12px; /* Aumenta o preenchimento dos campos */
+    border-radius: 6px; /* Arredonda mais as bordas dos campos */
+    border: 1.5px solid #ccc; /* Borda mais espessa dos campos */
+    flex-grow: 1;
+    min-width: 200px; /* Aumenta a largura mínima dos campos */
+    font-size: 1em; /* Aumenta o tamanho da fonte dos campos */
+}
+
+.filter-container select option {
+    font-size: 1em;
+}
+
+.filter-container button {
+    padding: 12px 25px; /* Aumenta o preenchimento do botão */
+    border: none;
+    border-radius: 6px; /* Arredonda mais as bordas do botão */
+    background-color: #00bcd4;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0;
+    font-size: 1.1em; /* Aumenta o tamanho da fonte do botão */
+}
+
+.filter-container button:hover {
+    background-color: #008ba7;
+}
 
 .filter-bar {
     display: flex;

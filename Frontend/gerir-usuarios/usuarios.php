@@ -31,24 +31,24 @@
                     </tr>
                 </thead>
                 <tbody id="users-table-body">
-                    <?php
-                    require '../../backend/config/database.php';
+    <?php
+    require '../../backend/config/database.php';
 
-                    try {
-                        $stmt = $pdo->query("SELECT id, nome, funcao, tipo_acesso FROM usuarios");
-                        while ($utilizador = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                            echo '<tr>';
-                            echo '<td>' . htmlspecialchars($utilizador['id']) . '</td>';
-                            echo '<td>' . htmlspecialchars($utilizador['nome']) . '</td>';
-                            echo '<td>' . htmlspecialchars($utilizador['funcao']) . '</td>';
-                            echo '<td>' . htmlspecialchars($utilizador['tipo_acesso']) . '</td>';
-                            echo '</tr>';
-                        }
-                    } catch (PDOException $e) {
-                        echo '<tr><td colspan="4" class="mensagem-erro">Erro ao buscar utilizadores: ' . htmlspecialchars($e->getMessage()) . '</td></tr>';
-                    }
-                    ?>
-                </tbody>
+    try {
+        $stmt = $pdo->query("SELECT id, nome, funcao, tipo_acesso FROM usuarios");
+        while ($utilizador = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            echo '<tr onclick="window.location.href=\'alterar-usuarios.php?id=' . htmlspecialchars($utilizador['id']) . '\'" style="cursor: pointer;">';
+            echo '<td>' . htmlspecialchars($utilizador['id']) . '</td>';
+            echo '<td>' . htmlspecialchars($utilizador['nome']) . '</td>';
+            echo '<td>' . htmlspecialchars($utilizador['funcao']) . '</td>';
+            echo '<td>' . htmlspecialchars($utilizador['tipo_acesso']) . '</td>';
+            echo '</tr>';
+        }
+    } catch (PDOException $e) {
+        echo '<tr><td colspan="4" class="mensagem-erro">Erro ao buscar utilizadores: ' . htmlspecialchars($e->getMessage()) . '</td></tr>';
+    }
+    ?>
+</tbody>
             </table>
         </div>
         <div class="acoes">

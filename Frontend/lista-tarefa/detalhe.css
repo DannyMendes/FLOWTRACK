@@ -19,7 +19,7 @@ body {
     box-sizing: border-box;
 }
 
-.menu-icon  {
+.menu-icon {
     font-size: 24px;
     cursor: pointer;
     margin-right: 10px;
@@ -49,6 +49,8 @@ body {
     margin-bottom: 20px;
 }
 
+
+
 .tasks-table-container {
     overflow-x: auto;
 }
@@ -58,7 +60,8 @@ body {
     border-collapse: collapse;
 }
 
-.tasks-table th, .tasks-table td {
+.tasks-table th,
+.tasks-table td {
     padding: 10px 15px;
     text-align: left;
     border-bottom: 1px solid #ddd;
@@ -87,3 +90,4 @@ body {
 .open-button:hover {
     background-color: #b2ebf2;
 }
+

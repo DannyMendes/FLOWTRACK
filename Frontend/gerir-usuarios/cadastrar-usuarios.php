@@ -47,9 +47,8 @@
                 <label for="tipo_acesso">Tipo de Acesso:</label>
                 <select id="tipo_acesso" name="tipo_acesso">
                     <option value="">Selecione</option>
-                    <option value="ADMIN">Administrador</option>
                     <option value="GESTOR">Gestor</option>
-                    <option value="USUARIO">Usuário</option>
+                    <option value="COLABORADOR">Colaborador</option>
                 </select>
             </div>
             <div class="grupo-formulario">

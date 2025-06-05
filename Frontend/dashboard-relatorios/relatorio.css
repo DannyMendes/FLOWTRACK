@@ -337,46 +337,86 @@ body {
     font-weight: bold;
 }
 
-/* Estilos específicos para impressão */
-@media print {
-    body * {
-        visibility: hidden;
+    @media print {
+    /* Esconde elementos de navegação, cabeçalho e filtros que não devem ser impressos */
+    .header,
+    .navegacao,
+    .modal-footer, /* Esconde o rodapé do modal (incluindo o botão Imprimir) */
+    .modal-content .close-button { /* Esconde o botão de fechar do modal */
+        display: none !important;
+        visibility: hidden !important;
     }
-    #reportModal, #reportModal * {
-        visibility: visible;
-    }
+
+    /* Garante que o modal e seu conteúdo sejam visíveis e se comportem como conteúdo de página */
     #reportModal {
-        position: absolute;
-        left: 0;
-        top: 0;
+        display: block !important; /* Torna o modal visível */
+        position: static !important; /* Remove posicionamento fixo */
         width: 100% !important;
         height: auto !important;
-        max-width: none !important;
-        max-height: none !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
-        transform: none !important;
+        overflow: visible !important; /* Permite que o conteúdo flua */
+        background-color: transparent !important; /* Remove o fundo do modal */
+        box-shadow: none !important; /* Remove sombras */
+        margin: 0 !important; /* Remove margens do modal */
+        padding: 0 !important; /* Remove padding do modal */
     }
+
     .modal-content {
-        padding: 0 !important;
-        margin: 0 !important;
-        border: none !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
+        width: auto !important; /* Ajusta a largura do conteúdo do modal automaticamente */
+        max-width: none !important; /* Remove largura máxima */
+        height: auto !important;
+        max-height: none !important;
+        margin: 0 auto !important; /* Centraliza o conteúdo horizontalmente */
+        padding: 20px !important; /* Mantém um padding para o conteúdo */
+        border: none !important; /* Remove a borda do modal content */
+        background-color: transparent !important; /* Remove o fundo */
+        box-shadow: none !important; /* Remove a sombra */
+        page-break-after: auto; /* Permite quebras de página */
     }
-    .modal-content .close-button,
-    .modal-footer {
-        display: none !important;
+
+    /* Garante que a tabela e seu container sejam visíveis e fluam */
+    #modal-table-container,
+    .tasks-table {
+        visibility: visible !important;
+        display: block !important;
+        width: 100% !important;
+        max-width: none !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important; /* Crucial para mostrar todo o conteúdo da tabela */
+        margin-top: 0 !important; /* Remove margem superior excessiva da tabela */
     }
-    table {
+
+    .tasks-table {
         border-collapse: collapse;
         width: 100%;
+        margin-top: 20px; /* Adiciona uma pequena margem superior à tabela, se desejar */
     }
-    th, td {
-        border: 1px solid #000;
+
+    .tasks-table th,
+    .tasks-table td {
+        border: 1px solid #000; /* Bordas mais visíveis para impressão */
         padding: 8px;
+        text-align: left;
+        font-size: 0.8em; /* Pode ajustar o tamanho da fonte para caber mais na página */
     }
-    th {
+
+    .tasks-table th {
         background-color: #eee;
+        -webkit-print-color-adjust: exact; /* Para garantir que o fundo do cabeçalho seja impresso */
+        color-adjust: exact;
+    }
+
+    h3 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    /* Força a cor do texto para ser impressa */
+    * {
+        color: #000 !important;
+        background: none !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
     }
 }

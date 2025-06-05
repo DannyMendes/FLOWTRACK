@@ -33,14 +33,14 @@ if (isset($_GET['filter_status']) && !empty($_GET['filter_status'])) {
 if (isset($_GET['filter_period']) && !empty($_GET['filter_period'])) {
     if ($_GET['filter_period'] == 'semana') {
         $where .= " AND t.data_estimada >= DATE(NOW() - INTERVAL (WEEKDAY(NOW())) DAY)
-                    AND t.data_estimada < DATE(NOW() + INTERVAL (7 - WEEKDAY(NOW())) DAY)";
+                     AND t.data_estimada < DATE(NOW() + INTERVAL (7 - WEEKDAY(NOW())) DAY)";
     } elseif ($_GET['filter_period'] == 'mes') {
         $where .= " AND YEAR(t.data_estimada) = YEAR(CURDATE()) 
-                    AND MONTH(t.data_estimada) = MONTH(CURDATE())";
+                     AND MONTH(t.data_estimada) = MONTH(CURDATE())";
     }
 }
 
-// Filtro por Tema da Tarefa
+// Filtro por Tema da Tarefa (agora vem do input da top-bar)
 if (isset($_GET['search_tema']) && !empty($_GET['search_tema'])) {
     $search_term = '%' . $_GET['search_tema'] . '%';
     $where .= " AND t.tema LIKE :search_tema";
@@ -57,6 +57,7 @@ $sql = "
         t.local,
         t.prioridade,
         st.nome AS status_nome,
+        t.status, -- Adicionado para poder usar o status_id no CSS se necessário
         t.data_criacao,
         t.data_alteracao,
         uc.nome AS usuario_criacao_nome,
@@ -71,10 +72,10 @@ $sql = "
     INNER JOIN status_tarefas AS st ON t.status = st.id
     LEFT JOIN usuarios AS uc ON t.usuario_criacao = uc.id
     LEFT JOIN usuarios AS ua ON t.usuario_alteracao = ua.id
-    LEFT JOIN historico_status AS hs_all ON t.id = hs_all.tarefa_id -- Necessário para ligar às fotos_trabalho
+    LEFT JOIN historico_status AS hs_all ON t.id = hs_all.tarefa_id
     LEFT JOIN fotos_trabalho AS ft ON hs_all.id = ft.historico_status_id
     $where
-    GROUP BY t.id -- Agrupa por ID da tarefa para consolidar as fotos
+    GROUP BY t.id
     ORDER BY t.data_estimada DESC
 ";
 
@@ -84,10 +85,10 @@ try {
     $tarefas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Inicia a construção da tabela HTML
-    echo '<table class="tasks-table" id="modal-tasks-table">'; // Esta é a linha 87
+    echo '<table class="tasks-table" id="modal-tasks-table">'; 
     echo '<thead>';
     echo '<tr>';
-    echo '<th>Data Est.</th>'; // Data Estimada da Tarefa
+    echo '<th>Data Est.</th>'; 
     echo '<th>Tema</th>';
     echo '<th>Descrição Tarefa</th>';
     echo '<th>Local</th>';
@@ -115,8 +116,8 @@ try {
             echo '<td>' . htmlspecialchars($tarefa['descricao']) . '</td>';
             echo '<td>' . htmlspecialchars($tarefa['local']) . '</td>';
             echo '<td>' . htmlspecialchars($tarefa['prioridade']) . '</td>';
-            echo '<td data-status-id="' . htmlspecialchars($tarefa['status_id'] ?? '') . '">' . htmlspecialchars($tarefa['status_nome'] ?? '') . '</td>';
-            echo '<td>' . htmlspecialchars($tarefa['usuario_criacao_nome'] ?? 'N/A') . '</td>'; // Usando null coalescing para N/A
+            echo '<td data-status-id="' . htmlspecialchars($tarefa['status'] ?? '') . '">' . htmlspecialchars($tarefa['status_nome'] ?? '') . '</td>';
+            echo '<td>' . htmlspecialchars($tarefa['usuario_criacao_nome'] ?? 'N/A') . '</td>';
             echo '<td>' . htmlspecialchars($tarefa['usuario_alteracao_nome'] ?? 'N/A') . '</td>';
             echo '<td>' . htmlspecialchars($tarefa['data_criacao']) . '</td>';
             echo '<td>' . htmlspecialchars($tarefa['data_alteracao']) . '</td>';
@@ -129,19 +130,17 @@ try {
             echo '</tr>';
         }
     } else {
-        echo '<tr><td colspan="16">Nenhuma tarefa encontrada com os filtros selecionados.</td></tr>'; // Ajuste o colspan
+        echo '<tr><td colspan="16">Nenhuma tarefa encontrada com os filtros selecionados.</td></tr>';
     }
 
     echo '</tbody>';
     echo '</table>';
 
 } catch (PDOException $e) {
-    http_response_code(500); // Erro Interno do Servidor
-    // É uma boa prática criar um diretório 'logs' dentro de 'backend'
-    // Se o diretório não existir, crie-o ou ajuste o caminho do log.
+    http_response_code(500); 
     $log_dir = __DIR__ . '/logs';
     if (!file_exists($log_dir) && !is_dir($log_dir)) {
-        mkdir($log_dir, 0777, true); // Cria o diretório se não existir
+        mkdir($log_dir, 0777, true); 
     }
     $log_file = $log_dir . '/pdo_errors.log';
     $error_message = date('Y-m-d H:i:s') . " - PDOException (fetch_relatorio_tabela): " . $e->getMessage() . " na linha " . $e->getLine() . "\n";

@@ -61,14 +61,15 @@ body {
 .date-time {
     color: #777;
     margin: 35px;
-    max-width: 1000px; /* Para manter o alinhamento com os outros blocos */
+      max-width: 1000px; /* Para manter o alinhamento com os outros blocos */
     text-align:right;
     width: 100%;
     box-sizing: border-box;
     padding-right: 20px;
 }
+}
 
-/* --- ESTILOS CORRIGIDOS A PARTIR DAQUI --- */
+/* --- ESTILOS CORRIGIDOS --- */
 
 .content {
     width: 100%;
@@ -146,7 +147,7 @@ body {
     align-items: center;
     padding: 0; /* Remove o padding interno */
     background-color: transparent; /* Fundo transparente */
-    border-radius: 5px; /* Remove bordas arredondadas */
+     border-radius: 5px; /* Remove bordas arredondadas */
     border: 2px; /* Remove a borda */
     flex-wrap: wrap; /* Permite que os itens quebrem linha se a tela for pequena */
     width: 100%; /* Ocupa a largura total do .content */
@@ -213,7 +214,6 @@ body {
     padding-top: 2 5px;
     padding: 10px;
     box-sizing: border-box;
-
 }
 
 .legend-item {
@@ -264,149 +264,124 @@ body {
     font-weight: bold;
 }
 
-/* Estilos do Modal */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
+/* Remove estilos do modal antigo, ele não é mais usado */
+.modal,
 .modal-content {
-    background-color: #fefefe;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 900px;
+    display: none !important;
+}
+
+/* Estilos para a tabela aparecer na mesma página - Copiados e ajustados do style embutido */
+.tasks-table-section {
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 30px;
+    background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    position: relative;
-    animation-name: animatemodal;
-    animation-duration: 0.4s;
-    max-height: 90vh;
-    overflow-y: auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative; /* Para posicionar o botão fechar */
 }
 
-@keyframes animatemodal {
-    from {top: -300px; opacity: 0}
-    to {top: 0; opacity: 1}
-}
-
-.close-button {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+.tasks-table-section .close-table-button {
     position: absolute;
     top: 10px;
     right: 20px;
+    font-size: 24px;
+    color: #aaa;
     cursor: pointer;
+    z-index: 10;
 }
 
-.close-button:hover,
-.close-button:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
+.tasks-table-section .close-table-button:hover {
+    color: #333;
 }
 
-#modal-table-container .tasks-table {
+.tasks-table-section h3 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.tasks-table-section .tasks-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
 }
 
-#modal-table-container .tasks-table th,
-#modal-table-container .tasks-table td {
+.tasks-table-section .tasks-table th,
+.tasks-table-section .tasks-table td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
+    word-break: break-word; /* Quebra palavras longas */
 }
 
-#modal-table-container .tasks-table th {
+.tasks-table-section .tasks-table th {
     background-color: #f2f2f2;
     font-weight: bold;
 }
 
-    @media print {
+.tasks-table-section .tasks-table td img {
+    max-width: 50px; /* Tamanho pequeno para as imagens */
+    max-height: 50px;
+    display: block; /* Remove espaço extra abaixo da imagem */
+    margin: 0 auto; /* Centraliza a imagem na célula */
+    object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+    border-radius: 3px;
+}
+
+
+/* Estilos específicos para impressão */
+@media print {
     /* Esconde elementos de navegação, cabeçalho e filtros que não devem ser impressos */
     .header,
     .navegacao,
-    .modal-footer, /* Esconde o rodapé do modal (incluindo o botão Imprimir) */
-    .modal-content .close-button { /* Esconde o botão de fechar do modal */
+    .top-bar, /* Esconde a barra de pesquisa e o botão "Gerar relatório" */
+    .filter-container, /* Esconde os filtros e o botão "Filtrar Tarefas" */
+    
+    .tasks-table-section .close-table-button /* Esconde o botão de fechar da tabela */
+    {
         display: none !important;
         visibility: hidden !important;
     }
 
-    /* Garante que o modal e seu conteúdo sejam visíveis e se comportem como conteúdo de página */
-    #reportModal {
-        display: block !important; /* Torna o modal visível */
-        position: static !important; /* Remove posicionamento fixo */
-        width: 100% !important;
-        height: auto !important;
-        overflow: visible !important; /* Permite que o conteúdo flua */
-        background-color: transparent !important; /* Remove o fundo do modal */
-        box-shadow: none !important; /* Remove sombras */
-        margin: 0 !important; /* Remove margens do modal */
-        padding: 0 !important; /* Remove padding do modal */
-    }
-
-    .modal-content {
-        width: auto !important; /* Ajusta a largura do conteúdo do modal automaticamente */
-        max-width: none !important; /* Remove largura máxima */
-        height: auto !important;
-        max-height: none !important;
-        margin: 0 auto !important; /* Centraliza o conteúdo horizontalmente */
-        padding: 20px !important; /* Mantém um padding para o conteúdo */
-        border: none !important; /* Remove a borda do modal content */
-        background-color: transparent !important; /* Remove o fundo */
-        box-shadow: none !important; /* Remove a sombra */
-        page-break-after: auto; /* Permite quebras de página */
-    }
-
-    /* Garante que a tabela e seu container sejam visíveis e fluam */
-    #modal-table-container,
-    .tasks-table {
-        visibility: visible !important;
+    /* Garante que a seção da tabela seja visível para impressão */
+    .tasks-table-section {
         display: block !important;
+        position: static !important;
         width: 100% !important;
         max-width: none !important;
         height: auto !important;
         max-height: none !important;
-        overflow: visible !important; /* Crucial para mostrar todo o conteúdo da tabela */
-        margin-top: 0 !important; /* Remove margem superior excessiva da tabela */
+        overflow: visible !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
-    .tasks-table {
+    .tasks-table-section .tasks-table {
         border-collapse: collapse;
         width: 100%;
         margin-top: 20px; /* Adiciona uma pequena margem superior à tabela, se desejar */
     }
 
-    .tasks-table th,
-    .tasks-table td {
+    .tasks-table-section .tasks-table th,
+    .tasks-table-section .tasks-table td {
         border: 1px solid #000; /* Bordas mais visíveis para impressão */
         padding: 8px;
         text-align: left;
         font-size: 0.8em; /* Pode ajustar o tamanho da fonte para caber mais na página */
     }
 
-    .tasks-table th {
+    .tasks-table-section .tasks-table th {
         background-color: #eee;
         -webkit-print-color-adjust: exact; /* Para garantir que o fundo do cabeçalho seja impresso */
         color-adjust: exact;
     }
 
-    h3 {
+    .tasks-table-section h3 {
         text-align: center;
         color: #333;
         margin-bottom: 20px;
@@ -418,5 +393,14 @@ body {
         background: none !important;
         box-shadow: none !important;
         text-shadow: none !important;
+    }
+
+    /* Garante que as imagens sejam impressas */
+    .tasks-table-section .tasks-table td img {
+        display: inline-block !important; /* Mantenha as imagens em linha ou como bloco para aparecerem */
+        max-width: 50px !important;
+        max-height: 50px !important;
+        object-fit: contain !important; /* Use contain para garantir que a imagem inteira apareça, sem cortes */
+        border: 1px solid #ccc !important;
     }
 }

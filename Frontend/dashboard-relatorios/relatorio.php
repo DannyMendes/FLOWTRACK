@@ -1,28 +1,3 @@
-<?php
-session_start(); // Inicia a sessão para controle de acesso
-
-// --- Controle de Acesso (Importante!) ---
-// Apenas usuários logados e com tipo de acesso 'Administrador' devem poder acessar esta página.
-// Ajuste 'Administrador' para o valor exato na sua coluna de banco de dados, se diferente.
-if (!isset($_SESSION['id_usuario']) || !isset($_SESSION['acesso_usuario']) || $_SESSION['acesso_usuario'] !== 'Administrador') {
-    $_SESSION['erro_acesso'] = "Você não tem permissão para acessar esta página.";
-    header("Location: /FLOWTRACK/Frontend/pagina-login/index.php"); // Redireciona para a página de login
-    exit();
-}
-
-// Inclui o arquivo de conexão com o banco de dados
-require '../../backend/config/database.php';
-
-// Variáveis para manter os valores do filtro na página após submissão (para o formulário principal)
-$filter_date = isset($_GET['filter_date']) ? htmlspecialchars($_GET['filter_date']) : '';
-$filter_status = isset($_GET['filter_status']) ? htmlspecialchars($_GET['filter_status']) : '';
-$filter_period = isset($_GET['filter_period']) ? htmlspecialchars($_GET['filter_period']) : '';
-// Mantém o valor do campo de pesquisa após o envio do formulário
-$search_tema = isset($_GET['search_tema']) ? htmlspecialchars($_GET['search_tema']) : ''; // Este será movido para o form
-
-// Não há mais a renderização da tabela aqui, pois será via AJAX
-?>
-
 <!DOCTYPE html>
 <html lang="pt">
 
@@ -32,6 +7,69 @@ $search_tema = isset($_GET['search_tema']) ? htmlspecialchars($_GET['search_tema
     <title>Dashboard / Gestão - Relatórios</title>
     <link rel="stylesheet" href="relatorio.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Estilos para a tabela aparecer na mesma página */
+        .tasks-table-section {
+            width: 100%;
+            max-width: 1200px;
+            margin-top: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative; /* Para posicionar o botão fechar */
+            <?php echo $show_table ? '' : 'display: none;'; ?> /* Controla a visibilidade via PHP */
+        }
+
+        .tasks-table-section .close-table-button {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 24px;
+            color: #aaa;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .tasks-table-section .close-table-button:hover {
+            color: #333;
+        }
+
+        .tasks-table-section h3 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .tasks-table-section .tasks-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .tasks-table-section .tasks-table th,
+        .tasks-table-section .tasks-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            word-break: break-word; /* Quebra palavras longas */
+        }
+
+        .tasks-table-section .tasks-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .tasks-table-section .tasks-table td img {
+            max-width: 50px; /* Tamanho pequeno para as imagens */
+            max-height: 50px;
+            display: block; /* Remove espaço extra abaixo da imagem */
+            margin: 0 auto; /* Centraliza a imagem na célula */
+            object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+            border-radius: 3px;
+        }
+    </style>
 </head>
 
 <body>
@@ -59,7 +97,7 @@ $search_tema = isset($_GET['search_tema']) ? htmlspecialchars($_GET['search_tema
         }
         ?>
 
-        <div class="top-bar">
+        <form id="filter-form" class="top-bar">
             <div class="search-container">
                 <input type="text" id="search-input" name="search_tema" placeholder="Pesquisar por Tema" value="<?php echo $search_tema; ?>">
                 <i class="fas fa-times clear-icon"></i>
@@ -67,10 +105,10 @@ $search_tema = isset($_GET['search_tema']) ? htmlspecialchars($_GET['search_tema
             <button type="button" class="generate-report-button" id="generate-report-button">
                 Gerar relatório <i class="far fa-file-alt report-icon"></i>
             </button>
-        </div>
+        </form>
         
-        <form id="filter-form" class="filter-container">
-            <input type="date" id="filter-date" name="filter_date"
+        <form id="filter-form-details" class="filter-container">
+            <input type="hidden" name="search_tema" value="<?php echo $search_tema; ?>"> <input type="date" id="filter-date" name="filter_date"
                 value="<?php echo $filter_date; ?>">
 
             <select id="filter-status" name="filter_status">
@@ -95,10 +133,10 @@ $search_tema = isset($_GET['search_tema']) ? htmlspecialchars($_GET['search_tema
                 <option value="mes" <?php echo ($filter_period == 'mes') ? 'selected' : ''; ?>>Este Mês</option>
             </select>
 
-            <button type="submit" id="apply-filter-button">Filtrar Tarefas</button>
+            <button type="submit" name="apply_filter" value="1" id="apply-filter-button">Filtrar Tarefas</button>
         </form>
 
-        </div>
+    </div>
 
     <div class="main-container">
         <div class="sidebar">
@@ -127,19 +165,86 @@ $search_tema = isset($_GET['search_tema']) ? htmlspecialchars($_GET['search_tema
         </div>
     </div>
 
-    <div id="reportModal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h3>Relatório de Tarefas Filtradas</h3>
-            <div id="modal-table-container" class="tasks-table-container">
-                </div>
-            <div class="modal-footer">
-                <button id="print-pdf-button" class="print-pdf-button">
-                    <i class="fas fa-file-pdf"></i> Imprimir em PDF
-                </button>
-            </div>
+    <div id="tasks-table-section" class="tasks-table-section">
+        <span class="close-table-button" id="close-table-button">&times;</span>
+        <h3>Relatório de Tarefas Filtradas</h3>
+        <div class="tasks-table-container">
+            <table class="tasks-table">
+                <thead>
+                    <tr>
+                        <th>Data Est.</th>
+                        <th>Tema</th>
+                        <th>Descrição Tarefa</th>
+                        <th>Local</th>
+                        <th>Prioridade</th>
+                        <th>Status</th>
+                        <th>Criado Por</th>
+                        <th>Última Alt. Por</th>
+                        <th>Data Criação</th>
+                        <th>Data Última Alt.</th>
+                        <th>Motorista (Últ.)</th>
+                        <th>Matrícula (Últ.)</th>
+                        <th>Desc. Final Trab. (Últ.)</th>
+                        <th>Resposta 1 (Últ.)</th>
+                        <th>Resposta 2 (Últ.)</th>
+                        <th>Fotos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (count($tarefas) > 0): ?>
+                        <?php foreach ($tarefas as $tarefa): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($tarefa['data_estimada']); ?></td>
+                                <td><?php echo htmlspecialchars($tarefa['tema']); ?></td>
+                                <td><?php echo htmlspecialchars($tarefa['descricao']); ?></td>
+                                <td><?php echo htmlspecialchars($tarefa['local']); ?></td>
+                                <td><?php echo htmlspecialchars($tarefa['prioridade']); ?></td>
+                                <td data-status-id="<?php echo htmlspecialchars($tarefa['status'] ?? ''); ?>"><?php echo htmlspecialchars($tarefa['status_nome'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($tarefa['usuario_criacao_nome'] ?? 'N/A'); ?></td>
+                                <td><?php echo htmlspecialchars($tarefa['usuario_alteracao_nome'] ?? 'N/A'); ?></td>
+                                <td><?php echo htmlspecialchars($tarefa['data_criacao']); ?></td>
+                                <td><?php echo htmlspecialchars($tarefa['data_alteracao']); ?></td>
+                                <td><?php echo htmlspecialchars($tarefa['motorista_latest'] ?? 'N/A'); ?></td>
+                                <td><?php echo htmlspecialchars($tarefa['matricula_carrinha_latest'] ?? 'N/A'); ?></td>
+                                <td><?php echo htmlspecialchars($tarefa['descricao_trabalho_latest'] ?? 'N/A'); ?></td>
+                                <td><?php echo htmlspecialchars($tarefa['resposta_pergunta1_latest'] ?? 'N/A'); ?></td>
+                                <td><?php echo htmlspecialchars($tarefa['resposta_pergunta2_latest'] ?? 'N/A'); ?></td>
+                                <td>
+                                    <?php
+                                    if (!empty($tarefa['fotos_caminhos'])) {
+                                        // Usa '|||' como delimitador para evitar problemas com vírgulas no caminho do arquivo
+                                        $fotos_arr = explode('|||', $tarefa['fotos_caminhos']);
+                                        foreach ($fotos_arr as $caminho_foto) {
+                                            $caminho_foto = htmlspecialchars(trim($caminho_foto));
+                                            if (!empty($caminho_foto)) {
+                                                // Verifica se o caminho da foto é válido e o arquivo existe
+                                                // IMPORTANTE: Ajuste o caminho base para as fotos conforme seu servidor
+                                                $base_path = '/FLOWTRACK/uploads/'; // Exemplo: ajuste para o diretório de uploads
+                                                $full_path = $base_path . basename($caminho_foto); // Use basename para evitar subir diretórios se o caminho completo for salvo
+
+                                                // Você pode adicionar uma verificação de file_exists() aqui se os arquivos estiverem acessíveis pelo servidor
+                                                // Ex: if (file_exists($_SERVER['DOCUMENT_ROOT'] . $full_path)) {
+                                                echo '<img src="' . $full_path . '" alt="Foto da Tarefa" style="max-width: 50px; max-height: 50px; margin: 2px; border: 1px solid #ddd;">';
+                                                // } else {
+                                                //     echo '<span>[Imagem não encontrada]</span>';
+                                                // }
+                                            }
+                                        }
+                                    } else {
+                                        echo 'N/A';
+                                    }
+                                    ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr><td colspan="16">Nenhuma tarefa encontrada com os filtros selecionados.</td></tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
         </div>
     </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -158,30 +263,6 @@ $search_tema = isset($_GET['search_tema']) ? htmlspecialchars($_GET['search_tema
             document.getElementById('current-date').textContent = formattedDate;
         }
         setInterval(updateDate, 1000); // Atualiza a cada segundo
-
-        // Dados PHP para gráfico (mantido)
-        <?php
-        try {
-            $totalTarefasStmt = $pdo->query("SELECT COUNT(*) FROM tarefas");
-            $totalTarefas = $totalTarefasStmt->fetchColumn();
-
-            $stmt_finalizado_id = $pdo->prepare("SELECT id FROM status_tarefas WHERE nome = 'FINALIZADO'");
-            $stmt_finalizado_id->execute();
-            $finalizado_id = $stmt_finalizado_id->fetchColumn();
-
-            $tarefasConcluidas = 0;
-            if ($finalizado_id) {
-                $concluidasStmt = $pdo->prepare("SELECT COUNT(*) FROM tarefas WHERE status = :finalizado_id");
-                $concluidasStmt->bindParam(':finalizado_id', $finalizado_id);
-                $concluidasStmt->execute();
-                $tarefasConcluidas = $concluidasStmt->fetchColumn();
-            }
-            
-            $porcentagemRealizada = ($totalTarefas > 0) ? round(($tarefasConcluidas / $totalTarefas) * 100) : 0;
-        } catch (PDOException $e) {
-            $porcentagemRealizada = 0;
-        }
-        ?>
 
         // Exibe porcentagem no centro do gráfico
         const ctx = document.getElementById('taskProgressChart').getContext('2d');
@@ -213,144 +294,59 @@ $search_tema = isset($_GET['search_tema']) ? htmlspecialchars($_GET['search_tema
             options: options
         });
 
-        // --- Lógica do Modal e Requisição AJAX ---
         document.addEventListener('DOMContentLoaded', function() {
-            const reportModal = document.getElementById('reportModal');
-            const closeButton = document.querySelector('.close-button');
-            const applyFilterButton = document.getElementById('apply-filter-button');
+            const searchInput = document.getElementById('search-input');
+            const clearIcon = document.querySelector('.search-container .clear-icon');
             const generateReportButton = document.getElementById('generate-report-button');
-            const filterForm = document.getElementById('filter-form'); 
-            const modalTableContainer = document.getElementById('modal-table-container');
-            const printPdfButton = document.getElementById('print-pdf-button'); 
+            const closeTableButton = document.getElementById('close-table-button');
+            const tasksTableSection = document.getElementById('tasks-table-section');
+            const filterFormTopBar = document.getElementById('filter-form'); // O formulário da top-bar (pesquisa)
+            const filterFormDetails = document.getElementById('filter-form-details'); // O formulário dos filtros detalhados
 
-            // Elementos para pesquisa e limpar (agora na top-bar)
-            const searchInput = document.getElementById('search-input'); 
-            const clearIcon = document.querySelector('.search-container .clear-icon'); 
-
-            // Event listener para limpar o campo de pesquisa
+            // Lógica para limpar o campo de pesquisa
             if (clearIcon) {
                 clearIcon.addEventListener('click', function() {
-                    searchInput.value = ''; 
+                    searchInput.value = '';
+                    // Opcional: Re-enviar o formulário para limpar a pesquisa ou fazer algo mais
+                    // filterFormDetails.submit(); // Pode submeter para atualizar a tabela
                 });
             }
 
-            // Função para buscar e exibir a tabela no modal
-            async function fetchAndDisplayReport() {
-                // Coleta os dados do formulário de filtros
-                const formData = new FormData(filterForm); 
-                // Adiciona o valor da pesquisa ao FormData
-                formData.append('search_tema', searchInput.value); 
-                const queryString = new URLSearchParams(formData).toString();
+            // O botão "Filtrar Tarefas" no filter-form-details já submete o formulário via PHP (GET)
+            // e a tabela será exibida automaticamente se houver resultados, controlado pelo PHP.
 
-                try {
-                    const response = await fetch(`../../backend/fetch_relatorio_tabela.php?${queryString}`);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const tableHtml = await response.text();
-                    modalTableContainer.innerHTML = tableHtml; 
-                    reportModal.style.display = 'block'; 
-                } catch (error) {
-                    console.error('Erro ao buscar o relatório:', error);
-                    alert('Erro ao gerar o relatório. Por favor, tente novamente.');
-                }
+            // Lógica para o botão "Gerar relatório" (imprime a página)
+            if (generateReportButton) {
+                generateReportButton.addEventListener('click', function() {
+                    window.print(); // Imprime a página atual
+                });
             }
 
-            // Event Listener para o botão "Filtrar Tarefas" (submit do formulário)
-            applyFilterButton.addEventListener('click', function(event) {
-                event.preventDefault(); // Impede o envio padrão do formulário
-                fetchAndDisplayReport();
+            // Lógica para ocultar a tabela quando o "X" é clicado
+            if (closeTableButton) {
+                closeTableButton.addEventListener('click', function() {
+                    tasksTableSection.style.display = 'none';
+                    // Opcional: Remover os parâmetros de filtro da URL para 'resetar' o estado
+                    const url = new URL(window.location.href);
+                    url.searchParams.delete('filter_date');
+                    url.searchParams.delete('filter_status');
+                    url.searchParams.delete('filter_period');
+                    url.searchParams.delete('search_tema');
+                    url.searchParams.delete('apply_filter');
+                    window.history.pushState({}, '', url);
+                });
+            }
+
+            // Event listener para o formulário de pesquisa (top-bar)
+            // Quando a pesquisa é feita aqui, ele deve enviar os filtros também.
+            // Para isso, vamos fazer com que o botão Filtrar Tarefas seja o único a submeter o formulário principal.
+            // E a barra de pesquisa atualiza o input hidden no formulário de detalhes.
+            searchInput.addEventListener('input', function() {
+                filterFormDetails.querySelector('input[name="search_tema"]').value = this.value;
             });
 
-            // Event Listener para o botão "Gerar relatório" (na top-bar)
-            generateReportButton.addEventListener('click', function() {
-                fetchAndDisplayReport();
-            });
-
-            // Event Listener para o botão "Imprimir em PDF" (via navegador)
-            printPdfButton.addEventListener('click', function() {
-                const modalContent = document.getElementById('reportModal').querySelector('.modal-content');
-
-                const printWindow = window.open('', '_blank');
-
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = modalContent.innerHTML;
-
-                const closeBtnInPrint = tempDiv.querySelector('.close-button');
-                if (closeBtnInPrint) {
-                    closeBtnInPrint.remove();
-                }
-                const printBtnInPrint = tempDiv.querySelector('#print-pdf-button');
-                if (printBtnInPrint) {
-                    printBtnInPrint.remove();
-                }
-                const modalFooterInPrint = tempDiv.querySelector('.modal-footer');
-                if (modalFooterInPrint) {
-                    if (modalFooterInPrint.children.length === 0) {
-                        modalFooterInPrint.remove();
-                    }
-                }
-
-                const contentToPrint = tempDiv.innerHTML;
-
-                printWindow.document.write('<html><head><title>Relatório de Tarefas</title>');
-                printWindow.document.write('<link rel="stylesheet" href="relatorio.css">'); 
-
-                printWindow.document.write('<style>');
-                printWindow.document.write(`
-                    body { font-family: Arial, sans-serif; margin: 20px; }
-                    h3 { text-align: center; color: #333; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-                    th { background-color: #f2f2f2; font-weight: bold; }
-
-                    @media print {
-                        body { margin: 0; }
-                        
-                        .modal-content .close-button,
-                        .modal-footer {
-                            display: none !important;
-                        }
-                        #reportModal, #reportModal .modal-content, #modal-table-container, .tasks-table {
-                            visibility: visible !important;
-                            display: block !important;
-                            width: 100% !important;
-                            max-width: none !important;
-                            height: auto !important;
-                            max-height: none !important;
-                            background-color: transparent !important;
-                            box-shadow: none !important;
-                            padding: 0 !important;
-                            position: static !important; 
-                        }
-                        .tasks-table-container {
-                            overflow: visible !important; 
-                        }
-                    }
-                `);
-                printWindow.document.write('</style>');
-                printWindow.document.write('</head><body>');
-                printWindow.document.write(contentToPrint); 
-                printWindow.document.write('</body></html>');
-                printWindow.document.close(); 
-                printWindow.focus(); 
-                
-                setTimeout(() => {
-                    printWindow.print(); 
-                }, 750); 
-            });
-
-            // Event Listener para fechar o modal
-            closeButton.addEventListener('click', function() {
-                reportModal.style.display = 'none';
-            });
-
-            // Fecha o modal se clicar fora dele
-            window.addEventListener('click', function(event) {
-                if (event.target == reportModal) {
-                    reportModal.style.display = 'none';
-                }
-            });
+            // Se a página foi carregada com filtros, garante que a seção da tabela esteja visível
+            // (Isso já está controlado pelo PHP com `$show_table`)
         });
     </script>
 

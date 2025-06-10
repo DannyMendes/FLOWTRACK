@@ -225,8 +225,8 @@ body {
     margin-top: 20px;
 }
 
-.rota-info, .finalizar-info {
-    display: none;
+.rota-info, .iniciar-info, .finalizar-info {
+    /*display: none;*/
     margin-top: 10px;
     padding: 10px;
     border: 1px solid #ccc;
@@ -237,4 +237,40 @@ body {
 .obrigatorio::after {
     content: " *";
     color: red;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.status-opcao.selecionado {
+    background-color: #007bff; /* Ou a cor que você preferir para o botão selecionado */
+    color: white;
+    border-color: #007bff;
+}
+
+.status-opcao.status-atual {
+    border: 2px solid #00bcd4; /* Borda para destacar o status atual */
+    background-color: #e0f7fa; /* Fundo diferente para o status atual */
+    color: #00bcd4;
+}
+
+.mensagem {
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.mensagem-sucesso {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.mensagem-erro {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
 }

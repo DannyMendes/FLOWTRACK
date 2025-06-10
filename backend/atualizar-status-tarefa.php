@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $respostaPergunta1 = filter_input(INPUT_POST, 'resposta_pergunta1', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $respostaPergunta2 = filter_input(INPUT_POST, 'resposta_pergunta2', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
         $acao = filter_input(INPUT_POST, 'acao', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $usuarioLogadoId = $_SESSION['usuario_id'] ?? null; // Assume que o ID do usuário logado está na sessão
+        $usuarioLogadoId = $_SESSION['id_usuario'] ?? null; // Assume que o ID do usuário logado está na sessão
 
         // Verifique se o usuário está logado ANTES de qualquer operação no banco de dados
         if ($usuarioLogadoId === null) {

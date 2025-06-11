@@ -196,6 +196,14 @@ try {
             object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
             border-radius: 3px;
         }
+        
+        /* Adicionado para tornar as linhas clicáveis */
+        .tasks-table-section .tasks-table tbody tr {
+            cursor: pointer; /* Indica que a linha é clicável */
+        }
+        .tasks-table-section .tasks-table tbody tr:hover {
+            background-color: #f9f9f9; /* Efeito visual ao passar o mouse */
+        }
     </style>
 </head>
 
@@ -320,7 +328,7 @@ try {
                 <tbody>
                     <?php if (count($tarefas) > 0): ?>
                         <?php foreach ($tarefas as $tarefa): ?>
-                            <tr>
+                            <tr data-tarefa-id="<?php echo htmlspecialchars($tarefa['id']); ?>" onclick="window.location.href='/FLOWTRACK/Frontend/dashboard-relatorios/detalhe-completo-tarefa.php?id=<?php echo htmlspecialchars($tarefa['id']); ?>'">
                                 <td><?php echo htmlspecialchars($tarefa['data_estimada']); ?></td>
                                 <td><?php echo htmlspecialchars($tarefa['tema']); ?></td>
                                 <td><?php echo htmlspecialchars($tarefa['descricao']); ?></td>
@@ -344,17 +352,10 @@ try {
                                         foreach ($fotos_arr as $caminho_foto) {
                                             $caminho_foto = htmlspecialchars(trim($caminho_foto));
                                             if (!empty($caminho_foto)) {
-                                                // Verifica se o caminho da foto é válido e o arquivo existe
                                                 // IMPORTANTE: Ajuste o caminho base para as fotos conforme seu servidor
-                                                $base_path = '/FLOWTRACK/uploads/'; // Exemplo: ajuste para o diretório de uploads
-                                                $full_path = $base_path . basename($caminho_foto); // Use basename para evitar subir diretórios se o caminho completo for salvo
-
-                                                // Você pode adicionar uma verificação de file_exists() aqui se os arquivos estiverem acessíveis pelo servidor
-                                                // Ex: if (file_exists($_SERVER['DOCUMENT_ROOT'] . $full_path)) {
+                                                $base_path = '/FLOWTRACK/uploads/'; 
+                                                $full_path = $base_path . basename($caminho_foto); //  basename para evitar subir diretórios se o caminho completo for salvo
                                                 echo '<img src="' . $full_path . '" alt="Foto da Tarefa" style="max-width: 50px; max-height: 50px; margin: 2px; border: 1px solid #ddd;">';
-                                                // } else {
-                                                //     echo '<span>[Imagem não encontrada]</span>';
-                                                // }
                                             }
                                         }
                                     } else {

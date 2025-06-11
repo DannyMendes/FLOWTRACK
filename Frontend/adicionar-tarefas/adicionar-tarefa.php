@@ -9,7 +9,7 @@
     </head>
     <body>
         <div class="cabecalho">
-            <i class="fas fa-bars icone-menu"></i>
+        <i class="fas fa-bars icone-menu" onclick="window.location.href='/FLOWTRACK/Frontend/dashboard-gestao/dashboard.php'" style="cursor: pointer;"></i>
             <span class="titulo">Dashboard / Gestão</span>
         </div>
         <div class="navegacao">

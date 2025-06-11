@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="barra-navegacao">
-        <i class="fas fa-bars icone-menu"></i>
+        <i class="fas fa-bars icone-menu" onclick="window.location.href='/FLOWTRACK/Frontend/dashboard-gestao/dashboard.php'" style="cursor: pointer;"></i>
         <span class="titulo">Tarefas</span>
         <i class="fas fa-user-circle icone-usuario"></i>
     </div>
@@ -123,11 +123,6 @@
                         <input type="checkbox" id="materiais" name="verificacao_material" value="1"> Já verifiquei todos os materiais/ferramentas
                     </label>
                 </div>
-                <div class="iniciar-info hidden">
-                    <label for="materiais">
-                        <input type="checkbox" id="materiais" name="verificacao_material" value="1"> Já verifiquei todos os materiais/ferramentas
-                    </label>
-                </div>
 
                 <div class="finalizar-info hidden">
                     <h3>Informações de Finalização</h3>
@@ -151,7 +146,8 @@
                 </div>
 
                 <input type="hidden" name="acao" value="atualizar_status">
-                <button type="submit" class="botao-concluir-alteracao" id="salvar-status-btn"><i class="fas fa-check"></i> Salvar Alteração de Status</button>
+                <button type="submit" class="botao-concluir-alteracao" id="salvar-status-btn"onclick="return confirm('confirma a alteração de status da tarefa?')"><i class="fas fa-check"></i> Salvar Alteração de Status</button>
+                
             </form>
 
             <div id="feedback-message" class="mensagem"></div>

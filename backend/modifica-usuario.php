@@ -1,31 +1,30 @@
 <?php
-require 'config/database.php'; // Certifique-se de que este caminho está correto
+require 'config/database.php'; 
 session_start();
 
-// --- Controle de Acesso (Muito Importante!) ---
-// Apenas usuários logados e com tipo de acesso 'Administrador' devem poder gerenciar usuários.
-// Substitua 'Administrador' pelo valor exato da sua coluna 'tipo_acesso' no banco de dados.
+//Controle Acesso 'Administrador'
 if (!isset($_SESSION['id_usuario']) || !isset($_SESSION['acesso_usuario']) || $_SESSION['acesso_usuario'] !== 'Administrador') {
     $_SESSION['erro_acesso'] = "Você não tem permissão para realizar esta operação.";
-    header("Location: /FLOWTRACK/Frontend/pagina-login/index.php"); // Redireciona para a página de login
+    header("Location: /FLOWTRACK/Frontend/pagina-login/index.php"); // vai para a pg de login
     exit();
 }
 
-// URL de redirecionamento padrão para erros
+//redirecionamento p erros
 $redirect_erro_geral = "/FLOWTRACK/Frontend/gerir-usuarios/usuarios.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // --- Lógica para DELETAR Usuário ---
+    // DELETAR Usuário 
     if (isset($_POST['acao']) && $_POST['acao'] === 'deletar') {
-        $usuario_id = filter_var($_POST['id'], FILTER_SANITIZE_NUMBER_INT);
+        $usuario_id = filter_var($_POST['id'], FILTER_SANITIZE_NUMBER_INT);//sanitiza o ID do usuário evitando injeção SQL
 
+        // Verifica se o ID do usuário é válido
         if (empty($usuario_id)) {
             $_SESSION['erro_deletar_usuario'] = "ID de utilizador inválido para exclusão.";
             header("Location: " . $redirect_erro_geral);
             exit();
         }
 
-        // Validação adicional: Um administrador NÃO pode deletar a si mesmo!
+        // evita auto-deleção
         if ($usuario_id == $_SESSION['id_usuario']) {
             $_SESSION['erro_deletar_usuario'] = "Você não pode deletar sua própria conta de administrador.";
             header("Location: " . $redirect_erro_geral);
@@ -33,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         try {
-            // Verifique se o usuário existe antes de tentar deletar
+            // Ve se existe antes de tentar deletar
             $stmt_check = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE id = ?");
             $stmt_check->execute([$usuario_id]);
             if ($stmt_check->fetchColumn() === 0) {
@@ -48,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($stmt->rowCount() > 0) {
                 $_SESSION['sucesso_deletar_usuario'] = "Utilizador deletado com sucesso.";
             } else {
-                // Isso só deve acontecer se o usuário for encontrado mas a deleção falhar por alguma outra razão
+                // falha
                 $_SESSION['erro_deletar_usuario'] = "Erro ao deletar utilizador. Nenhuma linha afetada.";
             }
             header("Location: " . $redirect_erro_geral);
@@ -60,22 +59,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         }
     }
-    // --- Lógica para ATUALIZAR Usuário ---
+    //atualiza
     else {
         $usuario_id = filter_var($_POST['id'], FILTER_SANITIZE_NUMBER_INT);
-        $nome = filter_var($_POST['nome'], FILTER_SANITIZE_FULL_SPECIAL_CHARS); // Usar FULL_SPECIAL_CHARS
-        $funcao = filter_var($_POST['funcao'], FILTER_SANITIZE_FULL_SPECIAL_CHARS); // Usar FULL_SPECIAL_CHARS
-        $tipo_acesso = filter_var($_POST['tipo_acesso'], FILTER_SANITIZE_FULL_SPECIAL_CHARS); // Usar FULL_SPECIAL_CHARS
-        $usuario = filter_var($_POST['usuario_login'], FILTER_SANITIZE_FULL_SPECIAL_CHARS); // Mudei para usuario_login
+        $nome = filter_var($_POST['nome'], FILTER_SANITIZE_FULL_SPECIAL_CHARS); 
+        $funcao = filter_var($_POST['funcao'], FILTER_SANITIZE_FULL_SPECIAL_CHARS); 
+        $tipo_acesso = filter_var($_POST['tipo_acesso'], FILTER_SANITIZE_FULL_SPECIAL_CHARS); 
+        $usuario = filter_var($_POST['usuario_login'], FILTER_SANITIZE_FULL_SPECIAL_CHARS); 
         $nova_senha = $_POST['nova_senha'];
         $confirmar_senha = $_POST['confirmar_senha'];
 
         $redirect_erro_edicao = "/FLOWTRACK/Frontend/gerir-usuarios/editar-usuario.php?id=" . $usuario_id;
 
-        // --- Validações de Atualização ---
+        // verificacao
         if (empty($usuario_id)) {
             $_SESSION['erro_atualizar_usuario'] = "ID do utilizador para atualização é inválido.";
-            header("Location: " . $redirect_erro_geral); // Redireciona para a lista geral se o ID for inválido
+            header("Location: " . $redirect_erro_geral); 
             exit();
         }
 
@@ -85,15 +84,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         }
         
-        // Validação do formato do nome de usuário
+        // Valida formato nome
         if (!preg_match("/^[a-zA-Z0-9_]+$/", $usuario)) {
             $_SESSION['erro_atualizar_usuario'] = "Nome de usuário inválido. Use apenas letras, números e underscores.";
             header("Location: " . $redirect_erro_edicao);
             exit();
         }
 
-        // Validação do tipo de acesso (deve ser um dos valores ENUM)
-        $tipos_acesso_validos = ['Administrador', 'Comum']; // Verifique a capitalização no seu BD
+        // Valida tipo de acesso adm 
+        $tipos_acesso_validos = ['Administrador', 'Comum']; 
         if (!in_array($tipo_acesso, $tipos_acesso_validos)) {
             $_SESSION['erro_atualizar_usuario'] = "Tipo de acesso selecionado é inválido.";
             header("Location: " . $redirect_erro_edicao);
@@ -101,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         try {
-            // Verificar se o nome de usuário (login) já existe para OUTRO usuário
+            //nomejá existe ?
             $stmt_check_user = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE usuario = :usuario AND id != :id");
             $stmt_check_user->bindParam(':usuario', $usuario);
             $stmt_check_user->bindParam(':id', $usuario_id);
@@ -116,8 +115,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $sql = "UPDATE usuarios SET nome = ?, funcao = ?, tipo_acesso = ?, usuario = ?";
             $params = [$nome, $funcao, $tipo_acesso, $usuario];
 
+            //Senha
             if (!empty($nova_senha)) {
-                if (strlen($nova_senha) < 8) { // Exemplo de validação de comprimento
+                if (strlen($nova_senha) < 8) { 
                     $_SESSION['erro_atualizar_usuario'] = "A nova senha deve ter pelo menos 8 caracteres.";
                     header("Location: " . $redirect_erro_edicao);
                     exit();
@@ -137,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare($sql);
             $stmt->execute($params);
 
-            // Se o próprio usuário logado estiver sendo editado, atualize suas informações na sessão
+            // Se usuário logado editado, atualiza sessão
             if ($usuario_id == $_SESSION['id_usuario']) {
                 $_SESSION['nome_usuario'] = $nome;
                 $_SESSION['funcao_usuario'] = $funcao;

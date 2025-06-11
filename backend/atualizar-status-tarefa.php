@@ -3,12 +3,10 @@ require 'config/database.php';
 session_start();
 
 
-// Verifica se a requisição HTTP foi feita via POST
+// Verifica se a req foi POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // --- DEPURACÃO DE UPLOAD ---
     // Loga o conteúdo de $_FILES para ver se o PHP recebeu os arquivos
     error_log("Conteúdo de \$_FILES na requisição POST: " . print_r($_FILES, true));
-    // --- FIM DA DEPURACÃO ---
 
     // Verifica se o ID da tarefa foi enviado e é um número
     if (isset($_POST['id']) && is_numeric($_POST['id'])) {
@@ -27,12 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $acao = filter_input(INPUT_POST, 'acao', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
         // Obtém o ID do usuário logado da sessão.
-        // A chave 'id_usuario' é a que está sendo definida no seu script de login.
         $usuarioLogadoId = $_SESSION['id_usuario'] ?? null;
 
-        // --- VERIFICAÇÃO DE SEGURANÇA E VALIDAÇÃO INICIAL ---
 
-        // Se o ID do usuário logado não for encontrado na sessão, exibe erro e sai
+        // Se o ID nao logado
         if ($usuarioLogadoId === null) {
             echo "usuario_nao_logado";
             exit();
@@ -41,10 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Verifica se os dados essenciais (tarefaId, statusId, acao) estão presentes
         if ($tarefaId && $statusId && $acao === 'atualizar_status') {
             try {
-                // Inicia uma transação no banco de dados para garantir atomicidade das operações
+                // Inicia uma transação no BD
                 $pdo->beginTransaction();
 
-                // 1. Buscar o status atual da tarefa e o ID do seu criador
+                // Buscar o status atual da tarefa e o ID criador
                 $stmt_get_tarefa = $pdo->prepare("SELECT t.status, t.usuario_criacao AS usuario_criador_id FROM tarefas t WHERE t.id = :id");
                 $stmt_get_tarefa->bindParam(':id', $tarefaId, PDO::PARAM_INT);
                 $stmt_get_tarefa->execute();
@@ -52,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $statusAtualId = $tarefa_atual['status'] ?? null;
                 $usuarioCriadorId = $tarefa_atual['usuario_criacao'] ?? null;
 
-                // 2. Buscar a ordem dos status atual e do status alvo
+                // Buscar a ordem dos status atual e do status alvo
                 $stmt_get_ordem = $pdo->prepare("SELECT ordem FROM status_tarefas WHERE id = ?");
                 $stmt_get_ordem->execute([$statusAtualId]);
                 $statusAtualOrdemResult = $stmt_get_ordem->fetch(PDO::FETCH_ASSOC);
@@ -64,39 +60,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $podeAlterar = false;
 
-                // Regras de transição de status (mais específicas primeiro):
-
-                // Permitir salvar o mesmo status (para atualizar informações adicionais sem mudar o status)
+                // Permitir salvar o mesmo status -info adicionais
                 if ($statusAtualId === $statusId) {
                     $podeAlterar = true;
                 }
-                // Permitir que o status PENDENTE (ID 11) vá diretamente para INICIADO (ID 13)
-                // Esta é a regra específica que você solicitou, usando os IDs diretamente.
+                // Permitir status PENDENTE (ID 11) vá direto para INICIADO (ID 13)
                 elseif ($statusAtualId == 11 && $statusId == 13) {
                     $podeAlterar = true;
                 }
-                // Permitir avançar para o próximo status na ordem definida (regra geral)
+                // Permitir avançar para o próximo status na ordem
                 elseif ($statusAlvoOrdem === $statusAtualOrdem + 1) {
                     $podeAlterar = true;
                 }
 
-                // Se a alteração de status não for permitida por nenhuma das regras acima, aborta
+                // senao aborta
                 if (!$podeAlterar) {
                     echo "alteracao_nao_permitida";
-                    $pdo->rollBack(); // Desfaz quaisquer operações de transação pendentes
+                    $pdo->rollBack(); 
                     exit();
                 }
 
-                // A PARTIR DAQUI, o código só executa se $podeAlterar for TRUE, significando que a transição é válida.
-
-                // 3. Buscar o nome do status alvo (necessário para a lógica de 'FINALIZADO')
+                // Buscar o nome do status alvo 
                 $stmt_get_status_nome = $pdo->prepare("SELECT nome FROM status_tarefas WHERE id = :id");
                 $stmt_get_status_nome->bindParam(':id', $statusId, PDO::PARAM_INT);
                 $stmt_get_status_nome->execute();
                 $statusAlvoNomeResult = $stmt_get_status_nome->fetch(PDO::FETCH_ASSOC);
                 $statusAlvoNome = $statusAlvoNomeResult['nome'] ?? '';
 
-                // 4. Inserir uma nova entrada no histórico de status da tarefa
+                // Inserir uma nova entrada no histórico de status da tarefa
                 $stmt_historico = $pdo->prepare("
                     INSERT INTO historico_status (
                         tarefa_id, status_id, usuario_id, data_hora,
@@ -110,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ");
                 $stmt_historico->bindParam(':tarefa_id', $tarefaId, PDO::PARAM_INT);
                 $stmt_historico->bindParam(':status_id', $statusId, PDO::PARAM_INT);
-                $stmt_historico->bindParam(':usuario_id', $usuarioLogadoId, PDO::PARAM_INT); // Usando 'usuario_id' como na sua tabela
+                $stmt_historico->bindParam(':usuario_id', $usuarioLogadoId, PDO::PARAM_INT); 
                 $stmt_historico->bindParam(':matricula', $matriculaCarrinha, PDO::PARAM_STR);
                 $stmt_historico->bindParam(':motorista', $motorista, PDO::PARAM_STR);
                 $stmt_historico->bindParam(':material_ok', $verificacaoMaterial, PDO::PARAM_INT);
@@ -118,30 +109,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt_historico->bindParam(':pergunta1', $respostaPergunta1, PDO::PARAM_STR);
                 $stmt_historico->bindParam(':pergunta2', $respostaPergunta2, PDO::PARAM_STR);
                 $stmt_historico->execute();
-                $historicoStatusId = $pdo->lastInsertId(); // Obtém o ID da entrada de histórico recém-criada
+                $historicoStatusId = $pdo->lastInsertId(); 
 
-                // 5. Atualizar o status atual da tarefa na tabela 'tarefas'
+                // Atualizar o status atual da tarefa
                 $stmt_update_tarefa = $pdo->prepare("UPDATE tarefas SET status = :status_id WHERE id = :id");
                 $stmt_update_tarefa->bindParam(':status_id', $statusId, PDO::PARAM_INT);
                 $stmt_update_tarefa->bindParam(':id', $tarefaId, PDO::PARAM_INT);
                 $stmt_update_tarefa->execute();
 
-                // 6. Lógica específica para o status 'FINALIZADO'
-                // Buscar o tipo de acesso do usuário logado
+                // tipo de acesso do usuário logado
                 $stmt_get_acesso = $pdo->prepare("SELECT tipo_acesso FROM usuarios WHERE id = :id_usuario");
                 $stmt_get_acesso->bindParam(':id_usuario', $usuarioLogadoId, PDO::PARAM_INT);
                 $stmt_get_acesso->execute();
                 $tipoAcessoUsuario = $stmt_get_acesso->fetchColumn();
 
-                // Verifica se o usuário logado é o mesmo que iniciou A TAREFA ou se é um 'Administrador'
+                // Ver se o usuário logado é = o q iniciou a tarefa ou se é 'Administrador'
                 if ($usuarioLogadoId !== $usuarioInicioId && $tipoAcessoUsuario !== 'Administrador') {
                     echo "permissao_negada";
                     $pdo->rollBack();
                     exit();
                 }
                 if ($statusAlvoNome === 'FINALIZADO') {
-                    // Regras de permissão para finalizar (ex: apenas o criador ou um gestor)
-                    $gestorAcessoTotal = false; // Implemente a lógica real de verificação de gestor aqui
+                    $gestorAcessoTotal = false; 
                     if ($usuarioLogadoId !== $usuarioCriadorId && !$gestorAcessoTotal) {
                         echo "permissao_negada";
                         $pdo->rollBack();
@@ -157,11 +146,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     // Lógica de upload e armazenamento de fotos
                     if (!empty($_FILES['fotos']['name'][0])) {
-                        // Caminho físico ABSOLUTO no servidor para salvar os arquivos
-                        // Garante que o diretório 'uploads' esteja na raiz de 'FLOWTRACK'
-                        $pastaDestinoFisico = __DIR__ . '/../../uploads/'; 
-                        
-                        // Certifica-se de que a pasta de destino existe; se não, a cria recursivamente
+                       $pastaDestinoFisico = __DIR__ . '/../../uploads/'; 
+                    
                         if (!is_dir($pastaDestinoFisico)) {
                             mkdir($pastaDestinoFisico, 0777, true);
                             error_log("Diretório de uploads criado: " . $pastaDestinoFisico); // Loga a criação
@@ -171,20 +157,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         foreach ($_FILES['fotos']['tmp_name'] as $key => $tmpName) {
                             $nomeOriginalArquivo = $_FILES['fotos']['name'][$key];
-                            // Gera um nome único para o arquivo para evitar colisões
+                            // Gera um nome único para o arquivo
                             $nomeUnico = uniqid() . '_' . basename($nomeOriginalArquivo);
 
                             // Caminho físico completo onde o arquivo será salvo no servidor
                             $caminhoArquivoFisico = $pastaDestinoFisico . $nomeUnico;
-
-                            // Caminho que será SALVO NO BANCO DE DADOS (acessível via URL para o navegador)
-                            // Isso assume que sua aplicação está acessível em http://localhost/FLOWTRACK/
                             $caminhoArquivoWeb = '/FLOWTRACK/uploads/' . $nomeUnico; 
 
                             // Tenta mover o arquivo temporário para o destino final
                             if (move_uploaded_file($tmpName, $caminhoArquivoFisico)) {
                                 error_log("Arquivo movido com sucesso: " . $caminhoArquivoFisico); // Loga o sucesso
-                                // Insere o caminho WEB (URL-acessível) no banco de dados
+                                // Insere o caminho WEB (URL) no banco de dados
                                 $stmtFoto = $pdo->prepare("INSERT INTO fotos_trabalho (historico_status_id, caminho_arquivo) VALUES (:historico_id, :caminho)");
                                 $stmtFoto->bindParam(':historico_id', $historicoStatusId, PDO::PARAM_INT);
                                 $stmtFoto->bindParam(':caminho', $caminhoArquivoWeb, PDO::PARAM_STR); 
@@ -227,19 +210,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         }
                     } else {
                         error_log("Nenhuma foto foi enviada para o status FINALIZADO.");
-                        // Não necessariamente um erro se o JavaScript já validou, mas útil para debug
                     }
                 }
 
-                // Confirma todas as operações da transação no banco de dados
+                // Confirma todas as operações da transação no bd
                 $pdo->commit();
                 echo "success"; // Retorna sucesso para o frontend
 
             } catch (PDOException $e) {
-                // Em caso de erro, desfaz a transação e loga o erro
+                // Em caso de erro
                 $pdo->rollBack();
                 error_log("Erro no banco de dados ao atualizar status: " . $e->getMessage());
-                // var_dump($e); // Descomente para ver detalhes completos do erro no output (apenas para depuração)
+                
                 echo "erro_banco"; // Retorna um erro genérico para o frontend
             } catch (Exception $e) {
                 // Captura outras exceções que não sejam do PDO
@@ -248,10 +230,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo "erro_geral";
             }
         } else {
-            echo "dados_invalidos"; // Dados do formulário inválidos
+            echo "dados_invalidos"; 
         }
     } else {
-        echo "id_invalido"; // ID da tarefa não enviado ou inválido
+        echo "id_invalido"; 
     }
 } else {
     echo "metodo_invalido"; // Requisição não foi POST

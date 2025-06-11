@@ -5,7 +5,7 @@ session_start();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $usuario_id = filter_var($_POST['id'], FILTER_SANITIZE_NUMBER_INT);
 
-    if (!empty($usuario_id)) {
+    if (!empty($usuario_id)) { //usuario_id válido
         try {
             $stmt = $pdo->prepare("DELETE FROM usuarios WHERE id = ?");
             $stmt->execute([$usuario_id]);

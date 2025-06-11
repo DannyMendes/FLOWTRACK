@@ -1,15 +1,16 @@
 <?php
 // backend/processar_adm_tarefa.php
 
-session_start(); // Para acessar o ID do usuário logado
+session_start(); // acessar ID logado
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") { 
     $tema = filter_input(INPUT_POST, 'tema', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $descricao = filter_input(INPUT_POST, 'descricao', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
     $local = filter_input(INPUT_POST, 'local', FILTER_SANITIZE_FULL_SPECIAL_CHARS) ?? null;
-    $prioridade = filter_input(INPUT_POST, 'prioridade', FILTER_SANITIZE_FULL_SPECIAL_CHARS); // Usando FILTER_SANITIZE_FULL_SPECIAL_CHARS
+    $prioridade = filter_input(INPUT_POST, 'prioridade', FILTER_SANITIZE_FULL_SPECIAL_CHARS); 
     $data_estimada = filter_input(INPUT_POST, 'data');
-    $usuario_criacao = $_SESSION['id_usuario'] ?? null; // Pega o ID do usuário logado
+    $usuario_criacao = $_SESSION['id_usuario'] ?? null; 
 
     $erro_campos = false;
     $mensagem_erro = "";
@@ -24,8 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         require 'config/database.php';
 
         try {
-            // *** Defina o ID do status "Pendente" ***
-            // Consulte o banco de dados para obter o ID correto.
+            // Define ID do status "Pendente" e Consulte BD
             $stmt_status = $pdo->prepare("SELECT id FROM status_tarefas WHERE nome = 'Pendente'");
             $stmt_status->execute();
             $status_pendente = $stmt_status->fetch(PDO::FETCH_ASSOC);
@@ -55,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    // Se houver algum erro (campos vazios ou erro no banco), armazena na sessão
+    //  erro (campos vazios ou erro no banco), armazena na sessão
     $_SESSION['erro_cadastro_tarefa'] = $mensagem_erro;
     header("Location: /FLOWTRACK/Frontend/adicionar-tarefas/adicionar-tarefa.php"); // Redireciona de volta ao formulário
     exit();

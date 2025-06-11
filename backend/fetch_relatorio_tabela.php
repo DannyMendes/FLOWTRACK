@@ -3,33 +3,32 @@
 
 session_start();
 
-// --- Controle de Acesso (Importante!) ---
-// Apenas usuários logados e com tipo de acesso 'Administrador' devem poder acessar este endpoint.
+//  Controle de Acesso , Apenas 'Administrador' pode acessar
 if (!isset($_SESSION['id_usuario']) || !isset($_SESSION['acesso_usuario']) || $_SESSION['acesso_usuario'] !== 'Administrador') {
     http_response_code(403); // Acesso Proibido
     echo "Você não tem permissão para acessar este recurso.";
     exit();
 }
 
-require 'config/database.php'; // Caminho correto para o seu arquivo de conexão
+require 'config/database.php'; 
 
-// Inicia a construção da consulta SQL
-$where = "WHERE 1=1"; // Cláusula WHERE inicial para facilitar a adição de filtros
-$params = []; // Array para armazenar os parâmetros da consulta preparada
+// consulta SQL
+$where = "WHERE 1=1"; //  WHERE inicial facilitar a adição de filtros
+$params = []; // Array armazenar parâmetros da consulta 
 
-// Filtro por data estimada
+// Filtro  data 
 if (isset($_GET['filter_date']) && !empty($_GET['filter_date'])) {
     $where .= " AND t.data_estimada = :filter_date";
     $params[':filter_date'] = $_GET['filter_date'];
 }
 
-// Filtro por status
+// Filtro  status
 if (isset($_GET['filter_status']) && !empty($_GET['filter_status'])) {
     $where .= " AND t.status = :filter_status";
     $params[':filter_status'] = $_GET['filter_status'];
 }
 
-// Filtro por período (semana/mês)
+// Filtro período - semana/mês
 if (isset($_GET['filter_period']) && !empty($_GET['filter_period'])) {
     if ($_GET['filter_period'] == 'semana') {
         $where .= " AND t.data_estimada >= DATE(NOW() - INTERVAL (WEEKDAY(NOW())) DAY)
@@ -40,14 +39,14 @@ if (isset($_GET['filter_period']) && !empty($_GET['filter_period'])) {
     }
 }
 
-// Filtro por Tema da Tarefa (agora vem do input da top-bar)
+// Filtro Tema 
 if (isset($_GET['search_tema']) && !empty($_GET['search_tema'])) {
     $search_term = '%' . $_GET['search_tema'] . '%';
     $where .= " AND t.tema LIKE :search_tema";
     $params[':search_tema'] = $search_term;
 }
 
-// Consulta SQL completa com todas as junções e subqueries para os novos campos
+// Consulta SQL completa 
 $sql = "
     SELECT
         t.id,
@@ -84,7 +83,7 @@ try {
     $stmt->execute($params);
     $tarefas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Inicia a construção da tabela HTML
+    // construção da tabela HTML
     echo '<table class="tasks-table" id="modal-tasks-table">'; 
     echo '<thead>';
     echo '<tr>';
@@ -136,15 +135,16 @@ try {
     echo '</tbody>';
     echo '</table>';
 
-} catch (PDOException $e) {
-    http_response_code(500); 
+} catch (PDOException $e) { 
+    http_response_code(500);  
     $log_dir = __DIR__ . '/logs';
-    if (!file_exists($log_dir) && !is_dir($log_dir)) {
+    if (!file_exists($log_dir) && !is_dir($log_dir)) { // Verifica se o diretório de logs existe, se não, cria
         mkdir($log_dir, 0777, true); 
     }
-    $log_file = $log_dir . '/pdo_errors.log';
+    $log_file = $log_dir . '/pdo_errors.log'; // Define o caminho do arquivo de log
     $error_message = date('Y-m-d H:i:s') . " - PDOException (fetch_relatorio_tabela): " . $e->getMessage() . " na linha " . $e->getLine() . "\n";
-    error_log($error_message, 3, $log_file);
+    error_log($error_message, 3, $log_file);// Registra o erro no arquivo de log
     echo "Erro ao buscar tarefas. Por favor, tente novamente mais tarde.";
+    
 }
 ?>

@@ -36,7 +36,7 @@
                             echo '<div class="item-info-tarefa"><strong>PRIORIDADE</strong> <span id="tarefa-prioridade">' . htmlspecialchars($tarefa['prioridade']) . '</span></div>';
                             echo '<div class="item-info-tarefa"><strong>DESCRIÇÃO</strong> <span id="tarefa-descricao">' . htmlspecialchars($tarefa['descricao']) . '</span></div>';
                             echo '<div class="item-info-tarefa"><strong>STATUS</strong> <span id="tarefa-status">' . htmlspecialchars($tarefa['status_nome']) . '</span></div>';
-                            // Estes hidden inputs são importantes para o JS e para o envio do formulário principal
+                            // Estes hidden inputsformulário principal
                             echo '<input type="hidden" id="tarefa_id_hidden" name="tarefa_id_display" value="' . $tarefaId . '">';
                             echo '<input type="hidden" id="usuario_criador_id_hidden" name="usuario_criador_id_display" value="' . htmlspecialchars($tarefa['usuario_criador_id']) . '">';
                             echo '<input type="hidden" id="current_status_id_hidden" name="current_status_id_display" value="' . htmlspecialchars($tarefa['status_id_num']) . '">';
@@ -58,9 +58,6 @@
                     echo '<p class="mensagem-erro">Erro ao buscar status: ' . htmlspecialchars($e->getMessage()) . '</p>';
                     $status_opcoes = [];
                 }
-
-                // Não precisamos mais de $showRotaInfo, $showFinalizarInfo aqui no PHP para exibir
-                // Isso será controlado pelo JavaScript
                 ?>
             </div>
         </div>
@@ -74,7 +71,7 @@
                         $currentStatusId = $tarefa['status_id_num'];
                         foreach ($status_opcoes as $opcao):
                             $canSelect = false;
-                            // As IDs dos status são importantes para o PHP e para o JS
+                            
                             // 11 = PENDENTE, 12 = EM ROTA, 13 = INICIADO, 14 = FINALIZADO
                             if ($currentStatusId == 11) { // PENDENTE
                                 $canSelect = ($opcao['id'] == 12 || $opcao['id'] == 13); // EM ROTA ou INICIADO
@@ -87,7 +84,7 @@
                             }
                             // Permite re-selecionar o status atual, mas sem desabilitar o botão
                             if ($currentStatusId == $opcao['id']) {
-                                $canSelect = true; // Permite o clique, mas o tratamento será no JS/Backend
+                                $canSelect = true; 
                                 $current_status_class = 'status-atual'; // Classe para destacar o status atual
                             } else {
                                 $current_status_class = '';
@@ -167,15 +164,15 @@
             const currentStatusIdHiddenInput = document.getElementById('current_status_id_hidden'); // O status ID atual da tarefa
 
 
-            let currentSelectedStatusId = null; // Variável para armazenar o ID do status atualmente selecionado pelo usuário no frontend
+            let currentSelectedStatusId = null; //  armazenar o ID status atual
 
-            // Função para esconder todas as divs de informações extras
+            // esconder todas as divs de informações extras
             function hideAllExtraInfoDivs() {
                 rotaInfoDiv.classList.add('hidden');
                 finalizarInfoDiv.classList.add('hidden');
             }
 
-            // Função para atualizar a exibição das divs de informações extras
+            // atualizar a exibição das divs de info
             function updateExtraInfoDisplay(statusId) {
                 hideAllExtraInfoDivs(); // Esconde tudo primeiro
 
@@ -215,7 +212,7 @@
 
             // Lógica para o envio do formulário via AJAX
             form.addEventListener('submit', async function(event) {
-                event.preventDefault(); // Impede o envio padrão do formulário
+                event.preventDefault(); // Impede o envio padrão 
 
                 // Pega o ID da tarefa do input hidden
                 const tarefaId = tarefaIdHiddenInput.value;
@@ -224,15 +221,12 @@
                 // Pega o status ID atual da tarefa no DB
                 const currentStatusIdDB = parseInt(currentStatusIdHiddenInput.value);
 
-                // Validação mínima antes de enviar
+                // Valida antes de enviar
                 if (!tarefaId || !statusIdParaEnviar) {
                     feedbackMessageDiv.textContent = 'Erro: ID da tarefa ou status não selecionado.';
                     feedbackMessageDiv.className = 'mensagem mensagem-erro';
                     return;
                 }
-
-                // Lógica de validação de transição de status no frontend (opcional, pois o backend também valida)
-                // IDs: PENDENTE=11, EM ROTA=12, INICIADO=13, FINALIZADO=14
                 let canProceed = false;
                 if (statusIdParaEnviar == currentStatusIdDB) { // Pode "salvar" o mesmo status para atualizar info
                     canProceed = true;
@@ -285,7 +279,7 @@
                     if (result.includes('success')) {
                         feedbackMessageDiv.textContent = 'Status atualizado com sucesso!';
                         feedbackMessageDiv.className = 'mensagem mensagem-sucesso';
-                        // Opcional: recarregar a página para mostrar o novo status
+                        // recarrega página para mostrar o novo status
                         setTimeout(() => {
                             window.location.reload(); 
                         }, 1000); 
@@ -314,8 +308,6 @@
             });
 
             // Inicializa a exibição das divs com base no status atual ao carregar a página
-            // Esta parte garante que, se a página for recarregada e o status já for EM ROTA ou FINALIZADO,
-            // as informações adicionais já apareçam.
             const initialStatusId = parseInt(currentStatusIdHiddenInput.value);
             if (!isNaN(initialStatusId)) {
                 updateExtraInfoDisplay(initialStatusId);

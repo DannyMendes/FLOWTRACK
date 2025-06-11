@@ -1,11 +1,7 @@
 <?php
-session_start(); // Inicia a sessão para verificar o usuário logado, se necessário
-require '../../backend/config/database.php'; // Inclui a conexão com o banco de dados
+session_start(); 
+require '../../backend/config/database.php'; 
 
-// Habilita a exibição de erros para depuração (REMOVER EM PRODUÇÃO)
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
 $tarefaId = null;
 $tarefa = null;
@@ -15,15 +11,14 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $tarefaId = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
 
     try {
-        // 1. Buscar detalhes da tarefa principal
+        // Buscar detalhes da tarefa
         $stmt_tarefa = $pdo->prepare("SELECT t.data_estimada, t.tema, t.prioridade, t.descricao, s.nome AS status_nome, t.usuario_criacao AS usuario_criador_id FROM tarefas t JOIN status_tarefas s ON t.status = s.id WHERE t.id = :id");
         $stmt_tarefa->bindParam(':id', $tarefaId, PDO::PARAM_INT);
         $stmt_tarefa->execute();
         $tarefa = $stmt_tarefa->fetch(PDO::FETCH_ASSOC);
 
         if ($tarefa) {
-            // 2. Buscar histórico de status da tarefa
-            // Usando LEFT JOIN para garantir que mesmo que um usuário ou status seja nulo, a entrada apareça
+            // Buscar histórico de status datarefa
             $stmt_historico = $pdo->prepare("
                 SELECT 
                     hs.id AS historico_id, 
@@ -183,10 +178,10 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
         }
         /* Estilo para o botão de imprimir */
         .print-button {
-            display: block; /* Para ocupar a largura total e centralizar com margin auto */
-            margin: 20px auto; /* Centraliza o botão e adiciona espaçamento */
+            display: block; 
+            margin: 20px auto; 
             padding: 10px 20px;
-            background-color: #00a6d0; /* Cor azul do tema */
+            background-color: #00a6d0;
             color: white;
             border: none;
             border-radius: 5px;
@@ -196,31 +191,32 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .print-button:hover {
-            background-color: #008bb0; /* Tom mais escuro no hover */
+            background-color: #008bb0; 
         }
 
-        /* Regras para impressão: Esconder elementos não necessários na impressão */
+        /* Regras  impressão: Esconder elementos*/
         @media print {
             .header {
-                display: none; /* Esconde a barra de navegação no topo */
+                display: none; 
+                
             }
             .print-button {
-                display: none; /* Esconde o próprio botão de imprimir */
+                display: none; 
             }
             body {
-                background-color: #fff; /* Fundo branco para impressão */
+                background-color: #fff; 
             }
             .container {
-                box-shadow: none; /* Remove a sombra do container */
-                border: none; /* Remove bordas, se houver */
-                width: 100%; /* Ocupa a largura total na impressão */
+                box-shadow: none; 
+                border: none;
+                width: 100%; 
                 max-width: none;
                 margin-top: 0;
                 padding: 0;
             }
             h1, h2 {
-                color: #000; /* Cores escuras para melhor contraste na impressão */
-                border-bottom: 1px solid #ccc; /* Linha de separação mais suave */
+                color: #000; 
+                border-bottom: 1px solid #ccc; 
             }
             /* Garantir que as imagens sejam impressas */
             .photos-container img {
@@ -309,7 +305,6 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
-            <!-- Novo botão de imprimir -->
             <button class="print-button" onclick="window.print()">
                 <i class="fas fa-print"></i> Imprimir Relatório
             </button>

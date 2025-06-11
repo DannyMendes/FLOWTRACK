@@ -23,10 +23,8 @@
         <h2 class="titulo-pagina">Cadastrar Novo Usuário</h2>
 
         <?php
-        // A chamada session_start() já está no início do backend/processar_cadastro_usuario.php.
-        // Aqui no frontend, você também precisa dela para acessar as variáveis de sessão.
-        // Se este arquivo é acessado diretamente, como um template, é bom mantê-la aqui também.
-        session_start(); // Garante que a sessão seja iniciada para exibir mensagens
+        
+        session_start(); 
 
         if (isset($_SESSION['erro_cadastro'])) {
             echo '<div class="mensagem-erro">' . htmlspecialchars($_SESSION['erro_cadastro']) . '</div>';
@@ -34,7 +32,7 @@
         }
         if (isset($_SESSION['sucesso_cadastro'])) {
             echo '<div class="mensagem-sucesso">' . htmlspecialchars($_SESSION['sucesso_cadastro']) . '</div>';
-            unset($_SESSION['sucesso_cadastro']); // Limpa a variável de sessão após exibir a mensagem
+            unset($_SESSION['sucesso_cadastro']); 
         }
         // Mensagem de erro de acesso, caso o usuário não tenha permissão
         if (isset($_SESSION['erro_acesso'])) {

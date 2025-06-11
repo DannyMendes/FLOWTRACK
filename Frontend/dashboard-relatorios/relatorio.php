@@ -1,30 +1,28 @@
 <?php
-session_start(); // Inicia a sessão para controle de acesso
+session_start(); 
 
-// --- Controle de Acesso (Importante!) ---
-// Apenas usuários logados e com tipo de acesso 'Administrador' devem poder acessar esta página.
+// Controle de Acesso
 if (!isset($_SESSION['id_usuario']) || !isset($_SESSION['acesso_usuario']) || $_SESSION['acesso_usuario'] !== 'Administrador') {
     $_SESSION['erro_acesso'] = "Você não tem permissão para acessar esta página.";
     header("Location: /FLOWTRACK/Frontend/pagina-login/index.php"); // Redireciona para a página de login
     exit();
 }
 
-// Inclui o arquivo de conexão com o banco de dados
-require '../../backend/config/database.php'; // Ajuste o caminho se necessário
+require '../../backend/config/database.php'; 
 
-// Variáveis para manter os valores do filtro na página após submissão
+// filtro na página após submissão
 $filter_date = isset($_GET['filter_date']) ? htmlspecialchars($_GET['filter_date']) : '';
 $filter_status = isset($_GET['filter_status']) ? htmlspecialchars($_GET['filter_status']) : '';
 $filter_period = isset($_GET['filter_period']) ? htmlspecialchars($_GET['filter_period']) : '';
 $search_tema = isset($_GET['search_tema']) ? htmlspecialchars($_GET['search_tema']) : '';
 
-// Variável para controlar a visibilidade da tabela
+// visibilidade da tabela
 $show_table = false;
 $tarefas = []; // Inicializa a variável $tarefas
 
-// Lógica de filtragem e busca de dados (similar ao fetch_relatorio_tabela.php, mas agora aqui)
+// Lógica de filtragem e busca de dados
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['apply_filter']) || isset($_GET['search_tema']))) {
-    $show_table = true; // Mostra a tabela se um filtro foi aplicado ou pesquisa realizada
+    $show_table = true; // Mostra a tabela 
 
     $where = "WHERE 1=1";
     $params = [];
@@ -89,20 +87,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['apply_filter']) || iss
         $stmt->execute($params);
         $tarefas = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-        $log_dir = __DIR__ . '/../backend/logs'; // Caminho ajustado para o log
+        $log_dir = __DIR__ . '/../backend/logs'; 
         if (!file_exists($log_dir) && !is_dir($log_dir)) {
             mkdir($log_dir, 0777, true);
         }
         $log_file = $log_dir . '/pdo_errors.log';
         $error_message = date('Y-m-d H:i:s') . " - PDOException (relatorio.php): " . $e->getMessage() . " na linha " . $e->getLine() . "\n";
         error_log($error_message, 3, $log_file);
-        // Não exibe o erro completo para o usuário final, apenas uma mensagem genérica.
         echo '<div class="mensagem-erro">Erro ao buscar tarefas. Por favor, tente novamente mais tarde.</div>';
-        $tarefas = []; // Garante que $tarefas seja um array vazio em caso de erro
+        $tarefas = []; //  $tarefas array vazio em caso de erro
     }
 }
 
-// Dados PHP para gráfico (mantido)
+// Dados PHP para gráfico 
 try {
     $totalTarefasStmt = $pdo->query("SELECT COUNT(*) FROM tarefas");
     $totalTarefas = $totalTarefasStmt->fetchColumn();
@@ -145,7 +142,7 @@ try {
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 20px;
             box-sizing: border-box;
-            position: relative; /* Para posicionar o botão fechar */
+            position: relative; 
             <?php echo $show_table ? '' : 'display: none;'; ?> /* Controla a visibilidade via PHP */
         }
 
@@ -180,7 +177,7 @@ try {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
-            word-break: break-word; /* Quebra palavras longas */
+            word-break: break-word; 
         }
 
         .tasks-table-section .tasks-table th {
@@ -189,20 +186,20 @@ try {
         }
 
         .tasks-table-section .tasks-table td img {
-            max-width: 50px; /* Tamanho pequeno para as imagens */
+            max-width: 50px; 
             max-height: 50px;
-            display: block; /* Remove espaço extra abaixo da imagem */
-            margin: 0 auto; /* Centraliza a imagem na célula */
-            object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+            display: block;
+            margin: 0 auto; 
+            object-fit: cover; 
             border-radius: 3px;
         }
         
-        /* Adicionado para tornar as linhas clicáveis */
+        /* tornar as linhas clicáveis */
         .tasks-table-section .tasks-table tbody tr {
-            cursor: pointer; /* Indica que a linha é clicável */
+            cursor: pointer;
         }
         .tasks-table-section .tasks-table tbody tr:hover {
-            background-color: #f9f9f9; /* Efeito visual ao passar o mouse */
+            background-color: #f9f9f9; 
         }
     </style>
 </head>
@@ -347,12 +344,12 @@ try {
                                 <td>
                                     <?php
                                     if (!empty($tarefa['fotos_caminhos'])) {
-                                        // Usa '|||' como delimitador para evitar problemas com vírgulas no caminho do arquivo
+                                        //  '|||' - delimitador para evitar problemas com vírgulas no caminho do arquivo
                                         $fotos_arr = explode('|||', $tarefa['fotos_caminhos']);
                                         foreach ($fotos_arr as $caminho_foto) {
                                             $caminho_foto = htmlspecialchars(trim($caminho_foto));
                                             if (!empty($caminho_foto)) {
-                                                // IMPORTANTE: Ajuste o caminho base para as fotos conforme seu servidor
+                                              
                                                 $base_path = '/FLOWTRACK/uploads/'; 
                                                 $full_path = $base_path . basename($caminho_foto); //  basename para evitar subir diretórios se o caminho completo for salvo
                                                 echo '<img src="' . $full_path . '" alt="Foto da Tarefa" style="max-width: 50px; max-height: 50px; margin: 2px; border: 1px solid #ddd;">';
@@ -428,22 +425,20 @@ try {
             const generateReportButton = document.getElementById('generate-report-button');
             const closeTableButton = document.getElementById('close-table-button');
             const tasksTableSection = document.getElementById('tasks-table-section');
-            const filterFormTopBar = document.getElementById('filter-form'); // O formulário da top-bar (pesquisa)
-            const filterFormDetails = document.getElementById('filter-form-details'); // O formulário dos filtros detalhados
+            const filterFormTopBar = document.getElementById('filter-form'); 
+            const filterFormDetails = document.getElementById('filter-form-details'); 
 
             // Lógica para limpar o campo de pesquisa
             if (clearIcon) {
                 clearIcon.addEventListener('click', function() {
                     searchInput.value = '';
-                    // Opcional: Re-enviar o formulário para limpar a pesquisa ou fazer algo mais
-                    // filterFormDetails.submit(); // Pode submeter para atualizar a tabela
+                 
                 });
             }
 
-            // O botão "Filtrar Tarefas" no filter-form-details já submete o formulário via PHP (GET)
-            // e a tabela será exibida automaticamente se houver resultados, controlado pelo PHP.
+            
 
-            // Lógica para o botão "Gerar relatório" (imprime a página)
+            // botão "Gerar relatório" imprime
             if (generateReportButton) {
                 generateReportButton.addEventListener('click', function() {
                     window.print(); // Imprime a página atual
@@ -454,7 +449,7 @@ try {
             if (closeTableButton) {
                 closeTableButton.addEventListener('click', function() {
                     tasksTableSection.style.display = 'none';
-                    // Opcional: Remover os parâmetros de filtro da URL para 'resetar' o estado
+                
                     const url = new URL(window.location.href);
                     url.searchParams.delete('filter_date');
                     url.searchParams.delete('filter_status');
@@ -465,16 +460,10 @@ try {
                 });
             }
 
-            // Event listener para o formulário de pesquisa (top-bar)
-            // Quando a pesquisa é feita aqui, ele deve enviar os filtros também.
-            // Para isso, vamos fazer com que o botão Filtrar Tarefas seja o único a submeter o formulário principal.
-            // E a barra de pesquisa atualiza o input hidden no formulário de detalhes.
             searchInput.addEventListener('input', function() {
                 filterFormDetails.querySelector('input[name="search_tema"]').value = this.value;
             });
-
-            // Se a página foi carregada com filtros, garante que a seção da tabela esteja visível
-            // (Isso já está controlado pelo PHP com `$show_table`)
+            
         });
     </script>
 
